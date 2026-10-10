@@ -1,4 +1,4 @@
-require("dotenv").config();
+
 
 if (!process.env.DB_URI) {
     throw new Error("DB_URI is missing in .env file");

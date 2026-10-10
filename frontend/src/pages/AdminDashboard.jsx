@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { apiRequest } from '../api'
+import { resetAdminVerification } from '../App'
 import '../App.css'
 
 function AdminDashboard() {
@@ -11,6 +12,8 @@ function AdminDashboard() {
   const [error, setError] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
 
+
+  // Fetch dashboard statistics
   useEffect(() => {
     let active = true
 
@@ -23,14 +26,9 @@ function AdminDashboard() {
         }
       } catch (err) {
         if (active) {
-          setError(err.message || 'Unable to load dashboard.')
-
-          if (
-            err.message?.toLowerCase().includes('token') ||
-            err.message?.toLowerCase().includes('unauthorized')
-          ) {
-            navigate('/admin/login', { replace: true })
-          }
+          setError(
+            err.message || 'Unable to load dashboard.'
+          )
         }
       } finally {
         if (active) {
@@ -44,10 +42,13 @@ function AdminDashboard() {
     return () => {
       active = false
     }
-  }, [navigate])
+  }, [])
 
 
+  // Logout
   async function handleLogout() {
+    if (loggingOut) return
+
     try {
       setLoggingOut(true)
       setError('')
@@ -56,9 +57,16 @@ function AdminDashboard() {
         method: 'POST',
       })
 
-      navigate('/admin/login', { replace: true })
+      // Clear cached admin verification.
+      resetAdminVerification()
+
+      navigate('/admin/login', {
+        replace: true,
+      })
     } catch (err) {
-      setError(err.message || 'Logout failed. Please try again.')
+      setError(
+        err.message || 'Logout failed. Please try again.'
+      )
     } finally {
       setLoggingOut(false)
     }
@@ -130,6 +138,7 @@ function AdminDashboard() {
   ]
 
 
+  // Read statistics from the API response.
   function getValue(...keys) {
     const sources = [
       dashboardData,
@@ -141,7 +150,10 @@ function AdminDashboard() {
       if (!source) continue
 
       for (const key of keys) {
-        if (source[key] !== undefined && source[key] !== null) {
+        if (
+          source[key] !== undefined &&
+          source[key] !== null
+        ) {
           return source[key]
         }
       }
@@ -154,17 +166,26 @@ function AdminDashboard() {
   const stats = [
     {
       title: 'Total Students',
-      value: getValue('totalStudents', 'studentsCount'),
+      value: getValue(
+        'totalStudents',
+        'studentsCount'
+      ),
       icon: '🎓',
     },
     {
       title: 'Total Teachers',
-      value: getValue('totalTeachers', 'teachersCount'),
+      value: getValue(
+        'totalTeachers',
+        'teachersCount'
+      ),
       icon: '👨‍🏫',
     },
     {
       title: 'Pending Admissions',
-      value: getValue('pendingAdmissions', 'pendingAdmissionCount'),
+      value: getValue(
+        'pendingAdmissions',
+        'pendingAdmissionCount'
+      ),
       icon: '📋',
     },
     {
@@ -214,7 +235,9 @@ function AdminDashboard() {
               disabled={loggingOut}
               className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-400/20 disabled:opacity-50"
             >
-              {loggingOut ? 'Logging out...' : 'Logout ↗'}
+              {loggingOut
+                ? 'Logging out...'
+                : 'Logout ↗'}
             </button>
 
           </div>

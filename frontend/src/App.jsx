@@ -5,6 +5,7 @@ import {
   Navigate,
   useLocation,
 } from 'react-router-dom'
+
 import { apiRequest } from './api'
 
 import Home from './pages/Home'
@@ -30,26 +31,73 @@ import Reports from './pages/Reports'
 import Gallery from './pages/Gallery'
 
 
-// Protect all admin routes
+// Shared admin authentication cache.
+// It prevents repeated verification on every section navigation.
+let adminVerified = false
+let verificationPromise = null
+
+
+// Reset the cached verification after logout.
+export function resetAdminVerification() {
+  adminVerified = false
+  verificationPromise = null
+
+  window.dispatchEvent(
+    new Event('admin-auth-changed')
+  )
+}
+
+
+// Admin-only route protection
 function AdminRoute({ children }) {
-  const [authorized, setAuthorized] = useState(false)
-  const [checking, setChecking] = useState(true)
+  const [authorized, setAuthorized] = useState(adminVerified)
+  const [checking, setChecking] = useState(!adminVerified)
 
   const location = useLocation()
 
   useEffect(() => {
     let active = true
 
+    function handleAuthChange() {
+      if (!active) return
+
+      setAuthorized(adminVerified)
+      setChecking(false)
+    }
+
+    window.addEventListener(
+      'admin-auth-changed',
+      handleAuthChange
+    )
+
     async function verifyAdmin() {
+      // Reuse the verified state when navigating between admin sections.
+      if (adminVerified) {
+        if (active) {
+          setAuthorized(true)
+          setChecking(false)
+        }
+
+        return
+      }
+
       try {
-        // Backend verifies the admin session.
-        // apiRequest handles the existing token refresh flow.
-        await apiRequest('/dashboard')
+        // Avoid duplicate requests while verification is in progress.
+        if (!verificationPromise) {
+          verificationPromise = apiRequest('/dashboard')
+        }
+
+        await verificationPromise
+
+        adminVerified = true
 
         if (active) {
           setAuthorized(true)
         }
       } catch {
+        adminVerified = false
+        verificationPromise = null
+
         if (active) {
           setAuthorized(false)
         }
@@ -60,15 +108,17 @@ function AdminRoute({ children }) {
       }
     }
 
-    setAuthorized(false)
-    setChecking(true)
-
     verifyAdmin()
 
     return () => {
       active = false
+
+      window.removeEventListener(
+        'admin-auth-changed',
+        handleAuthChange
+      )
     }
-  }, [location.pathname])
+  }, [])
 
   if (checking) {
     return (
@@ -95,7 +145,7 @@ function AdminRoute({ children }) {
 function App() {
   return (
     <Routes>
-      {/* Public pages */}
+      {/* Public Pages */}
       <Route
         path="/"
         element={<Home />}
@@ -122,7 +172,7 @@ function App() {
       />
 
 
-      {/* Public admin login */}
+      {/* Admin Login */}
       <Route
         path="/admin/login"
         element={<AdminLogin />}
@@ -173,7 +223,7 @@ function App() {
       />
 
 
-      {/* Teacher Details - Admin Only */}
+      {/* Teacher Details */}
       <Route
         path="/admin/teacher-details"
         element={
@@ -250,7 +300,7 @@ function App() {
       />
 
 
-      {/* Unknown route */}
+      {/* Unknown Route */}
       <Route
         path="*"
         element={<Navigate to="/" replace />}

@@ -57,6 +57,12 @@ function AdminDashboard() {
       icon: '👨‍🎓',
     },
     {
+      title: 'Student Details',
+      description: 'Search students by name and view their full details.',
+      path: '/admin/student-details',
+      icon: '🔎',
+    },
+    {
       title: 'Teachers',
       description: 'Manage teachers and their details.',
       path: '/admin/teachers',
@@ -136,15 +142,15 @@ function AdminDashboard() {
       value: getValue('pendingAdmissions', 'pendingAdmissionCount'),
       icon: '📋',
     },
-   {
-  title: 'Monthly Fee Collection',
-  value: `₹${getValue('monthlyFeeCollection')}`,
-  icon: '💰',
-},
+    {
+      title: 'Monthly Fee Collection',
+      value: `₹${getValue('monthlyFeeCollection')}`,
+      icon: '💰',
+    },
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
+    <div className="min-h-screen bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />

@@ -39,13 +39,13 @@ export async function apiRequest(endpoint, options = {}) {
   const isPublicEndpoint =
     endpoint === '/notices' ||
     endpoint === '/admissions' ||
+    endpoint === '/admissions/check-status' ||
     endpoint === '/admin/login' ||
     endpoint === '/admin/refresh'
 
   if (response.status === 401 && !isPublicEndpoint) {
     try {
       await refreshAccessToken()
-
       response = await fetch(`${API_URL}${endpoint}`, requestOptions)
     } catch (error) {
       if (

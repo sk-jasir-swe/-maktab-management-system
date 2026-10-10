@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Admission from './pages/Admission'
 import AdmissionSuccess from './pages/AdmissionSuccess'
+import AdmissionStatus from './pages/AdmissionStatus'
+
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
 import Students from './pages/Students'
@@ -23,6 +25,12 @@ function App() {
       <Route path="/admission" element={<Admission />} />
       <Route path="/admission-success" element={<AdmissionSuccess />} />
 
+      {/* Admission Status */}
+      <Route
+        path="/admission-status"
+        element={<AdmissionStatus />}
+      />
+
       {/* Admin Pages */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -34,6 +42,8 @@ function App() {
       <Route path="/admin/exams" element={<ExamsResults />} />
       <Route path="/admin/notices" element={<Notices />} />
       <Route path="/admin/reports" element={<Reports />} />
+
+      {/* Gallery */}
       <Route path="/gallery" element={<Gallery />} />
     </Routes>
   )

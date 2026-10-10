@@ -132,6 +132,7 @@ function Home() {
         <div className="absolute -right-32 top-1/3 h-[28rem] w-[28rem] rounded-full bg-cyan-400/30 blur-[120px]" />
 
         <div className="absolute bottom-0 left-1/3 h-96 w-96 rounded-full bg-fuchsia-500/25 blur-[120px]" />
+
         <div className="absolute right-1/4 top-10 h-72 w-72 rounded-full bg-indigo-500/30 blur-[110px]" />
       </div>
 
@@ -146,6 +147,7 @@ function Home() {
               <span className="flex items-center gap-2 rounded-full border border-cyan-300/30 bg-violet-400/10 px-3 py-1.5 text-xs font-extrabold tracking-wider text-cyan-300 sm:text-sm">
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75" />
+
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-violet-400" />
                 </span>
 
@@ -220,6 +222,14 @@ function Home() {
             <a href="#contact" className="transition hover:text-cyan-300">
               Contact
             </a>
+
+            {/* NEW: Check Status */}
+            <Link
+              to="/admission-status"
+              className="rounded-full bg-cyan-400 px-4 py-2 font-semibold text-[#0b1026] transition hover:bg-cyan-300"
+            >
+              Check Status
+            </Link>
           </div>
         </nav>
       </header>
@@ -231,6 +241,7 @@ function Home() {
           <div>
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-sm text-cyan-200">
               <span className="h-2 w-2 rounded-full bg-violet-400" />
+
               A place to learn and grow
             </div>
 
@@ -261,6 +272,14 @@ function Home() {
               >
                 Discover More
               </a>
+
+              {/* NEW: Hero Status Button */}
+              <Link
+                to="/admission-status"
+                className="rounded-xl border border-cyan-300/30 bg-cyan-300/10 px-7 py-3.5 font-semibold text-cyan-200 transition hover:bg-cyan-300/20"
+              >
+                Check Admission Status →
+              </Link>
             </div>
 
             <div className="mt-12 grid grid-cols-3 gap-3 sm:gap-4">
@@ -268,21 +287,30 @@ function Home() {
                 <p className="text-xl font-bold text-cyan-300 sm:text-2xl">
                   Quality
                 </p>
-                <p className="mt-1 text-sm text-white/50">Education</p>
+
+                <p className="mt-1 text-sm text-white/50">
+                  Education
+                </p>
               </div>
 
               <div className="rounded-2xl border border-white/20 bg-white/10 p-4 text-center shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl">
                 <p className="text-xl font-bold text-cyan-300 sm:text-2xl">
                   Caring
                 </p>
-                <p className="mt-1 text-sm text-white/50">Teachers</p>
+
+                <p className="mt-1 text-sm text-white/50">
+                  Teachers
+                </p>
               </div>
 
               <div className="rounded-2xl border border-white/20 bg-white/10 p-4 text-center shadow-[0_8px_32px_rgba(0,0,0,0.25)] backdrop-blur-xl">
                 <p className="text-xl font-bold text-cyan-300 sm:text-2xl">
                   Strong
                 </p>
-                <p className="mt-1 text-sm text-white/50">Values</p>
+
+                <p className="mt-1 text-sm text-white/50">
+                  Values
+                </p>
               </div>
             </div>
           </div>
@@ -295,7 +323,10 @@ function Home() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-white/50">Welcome to</p>
-                  <h3 className="mt-1 text-2xl font-bold">Our Maktab</h3>
+
+                  <h3 className="mt-1 text-2xl font-bold">
+                    Our Maktab
+                  </h3>
                 </div>
 
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-violet-400/10 text-2xl text-cyan-300">
@@ -305,7 +336,9 @@ function Home() {
 
               <div className="my-8 flex h-56 items-center justify-center rounded-2xl border border-cyan-200/10 bg-gradient-to-br from-cyan-300/10 via-violet-200/5 to-transparent">
                 <div className="text-center">
-                  <div className="text-7xl text-cyan-300/80">☪</div>
+                  <div className="text-7xl text-cyan-300/80">
+                    ☪
+                  </div>
 
                   <p className="mt-4 text-sm tracking-[0.3em] text-cyan-100/70">
                     LEARN • GROW • EXCEL
@@ -315,13 +348,23 @@ function Home() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-white/20 bg-white/5 p-4">
-                  <p className="text-sm text-white/50">Education</p>
-                  <p className="mt-2 font-semibold">For Every Student</p>
+                  <p className="text-sm text-white/50">
+                    Education
+                  </p>
+
+                  <p className="mt-2 font-semibold">
+                    For Every Student
+                  </p>
                 </div>
 
                 <div className="rounded-2xl border border-white/20 bg-white/5 p-4">
-                  <p className="text-sm text-white/50">Environment</p>
-                  <p className="mt-2 font-semibold">Learn Together</p>
+                  <p className="text-sm text-white/50">
+                    Environment
+                  </p>
+
+                  <p className="mt-2 font-semibold">
+                    Learn Together
+                  </p>
                 </div>
               </div>
 
@@ -409,11 +452,11 @@ function Home() {
           )}
         </section>
 
-        {/* About Us + Our Memories Combined */}
+        {/* About Us + Our Memories */}
         <section id="about" className="mx-auto max-w-7xl px-6 py-20">
           <div className="grid items-center gap-12 lg:grid-cols-2">
 
-            {/* About Us - Left */}
+            {/* About Us */}
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
                 About Us
@@ -421,6 +464,7 @@ function Home() {
 
               <h2 className="mt-4 text-3xl font-bold leading-tight md:text-5xl">
                 Education with
+
                 <span className="block bg-gradient-to-r from-cyan-300 via-violet-300 to-pink-300 bg-clip-text text-transparent">
                   purpose &amp; values.
                 </span>
@@ -456,7 +500,7 @@ function Home() {
               </div>
             </div>
 
-            {/* Our Memories - Right */}
+            {/* Our Memories */}
             <div id="gallery">
               <div className="mb-6">
                 <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
@@ -472,7 +516,6 @@ function Home() {
                 </p>
               </div>
 
-              {/* Only Four Photos on Home */}
               <div className="grid grid-cols-2 gap-4">
                 {GALLERY_IMAGES.slice(0, 4).map((item) => (
                   <button
@@ -707,12 +750,22 @@ function Home() {
                 classes, timings, and the admission process.
               </p>
 
-              <Link
-                to="/admission"
-                className="mt-7 inline-block rounded-xl bg-gradient-to-r from-violet-400 to-cyan-300 shadow-lg shadow-violet-500/30 px-7 py-3.5 font-semibold text-[#0b1026] transition hover:brightness-110"
-              >
-                Apply Now ↗
-              </Link>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  to="/admission"
+                  className="inline-block rounded-xl bg-gradient-to-r from-violet-400 to-cyan-300 shadow-lg shadow-violet-500/30 px-7 py-3.5 font-semibold text-[#0b1026] transition hover:brightness-110"
+                >
+                  Apply Now ↗
+                </Link>
+
+                {/* NEW: Track Application */}
+                <Link
+                  to="/admission-status"
+                  className="inline-block rounded-xl border border-cyan-300/30 bg-white/5 px-7 py-3.5 font-semibold text-cyan-200 transition hover:bg-cyan-300/10"
+                >
+                  Track Your Application →
+                </Link>
+              </div>
             </div>
           </div>
         </section>

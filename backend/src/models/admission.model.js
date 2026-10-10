@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const admissionSchema = new mongoose.Schema(
     {
+        applicationNumber: {
+            type: String,
+            unique: true,
+            immutable: true,
+            trim: true,
+            uppercase: true,
+            sparse: true
+        },
+
         studentName: {
             type: String,
             required: true,

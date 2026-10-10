@@ -23,7 +23,6 @@ function Admissions() {
       setError('')
 
       const response = await apiRequest('/admissions')
-
       setAdmissions(response.admissions || [])
     } catch (err) {
       setError(err.message || 'Unable to load admissions.')
@@ -57,10 +56,12 @@ function Admissions() {
         },
       )
 
+      const updatedStatus = response.admission?.status || status
+
       setAdmissions((previous) =>
         previous.map((item) =>
           item._id === admission._id
-            ? { ...item, status: response.admission?.status || status }
+            ? { ...item, status: updatedStatus }
             : item,
         ),
       )
@@ -68,7 +69,7 @@ function Admissions() {
       if (selectedAdmission?._id === admission._id) {
         setSelectedAdmission((previous) => ({
           ...previous,
-          status: response.admission?.status || status,
+          status: updatedStatus,
         }))
       }
 
@@ -137,8 +138,19 @@ function Admissions() {
     },
   ]
 
+  function formatClassTime(classTime) {
+    if (classTime === 'after_asr') return 'After Asr'
+    if (classTime === 'after_maghrib') return 'After Maghrib'
+    if (classTime === 'morning') return 'Morning'
+    return classTime || '—'
+  }
+
+  function formatDate(date) {
+    return date ? new Date(date).toLocaleDateString() : '—'
+  }
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-linear-to-br` from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
@@ -241,7 +253,9 @@ function Admissions() {
         {/* Admissions Table */}
         <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/4 backdrop-blur-xl">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-6 py-5">
-            <h2 className="text-lg font-semibold">Admission Applications</h2>
+            <h2 className="text-lg font-semibold">
+              Admission Applications
+            </h2>
 
             <span className="text-sm text-white/45">
               {filteredAdmissions.length} application(s)
@@ -266,12 +280,13 @@ function Admissions() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-225 text-left text-sm">
+              <table className="w-full min-w-250 text-left text-sm">
                 <thead className="bg-white/3 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4 font-medium">Student</th>
                     <th className="px-6 py-4 font-medium">Father Name</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
+                    <th className="px-6 py-4 font-medium">WhatsApp</th>
                     <th className="px-6 py-4 font-medium">Class Time</th>
                     <th className="px-6 py-4 font-medium">Applied On</th>
                     <th className="px-6 py-4 font-medium">Status</th>
@@ -304,19 +319,15 @@ function Admissions() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {admission.classTime === 'after_asr'
-                          ? 'After Asr'
-                          : admission.classTime === 'after_maghrib'
-                            ? 'After Maghrib'
-                            : admission.classTime === 'morning'
-                              ? 'Morning'
-                              : admission.classTime || '—'}
+                        {admission.whatsappNumber || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {admission.createdAt
-                          ? new Date(admission.createdAt).toLocaleDateString()
-                          : '—'}
+                        {formatClassTime(admission.classTime)}
+                      </td>
+
+                      <td className="px-6 py-4 text-white/65">
+                        {formatDate(admission.createdAt)}
                       </td>
 
                       <td className="px-6 py-4">
@@ -419,17 +430,27 @@ function Admissions() {
                   ['Student Name', selectedAdmission.studentName],
                   ['Father Name', selectedAdmission.fatherName],
                   ['Mother Name', selectedAdmission.motherName],
-                  ['Date of Birth', selectedAdmission.dateOfBirth
-                    ? new Date(selectedAdmission.dateOfBirth).toLocaleDateString()
-                    : '—'],
+                  [
+                    'Date of Birth',
+                    formatDate(selectedAdmission.dateOfBirth),
+                  ],
                   ['Gender', selectedAdmission.gender],
                   ['Phone', selectedAdmission.phone],
-                  ['Class Time', selectedAdmission.classTime],
+                  ['WhatsApp Number', selectedAdmission.whatsappNumber],
+                  [
+                    'Application Number',
+                    selectedAdmission.applicationNumber,
+                  ],
+                  [
+                    'Class Time',
+                    formatClassTime(selectedAdmission.classTime),
+                  ],
                   ['Status', selectedAdmission.status],
                   ['Address', selectedAdmission.address],
-                  ['Application Date', selectedAdmission.createdAt
-                    ? new Date(selectedAdmission.createdAt).toLocaleDateString()
-                    : '—'],
+                  [
+                    'Application Date',
+                    formatDate(selectedAdmission.createdAt),
+                  ],
                 ].map(([label, value]) => (
                   <div
                     key={label}

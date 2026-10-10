@@ -1,13 +1,19 @@
-const app = require("./src/app")
-const ConnectDB = require(".//src/config/db")
+const app = require("./src/app");
+const ConnectDB = require("./src/config/db");
 
+const PORT = process.env.PORT || 5001;
 
-ConnectDB();
-
-app.listen(5001,()=>{
+async function startServer() {
     try {
-        console.log("Your server is running on port 5001")
+        await ConnectDB();
+
+        app.listen(PORT, () => {
+            console.log(`Your server is running on port ${PORT}`);
+        });
     } catch (error) {
-        console.log("Error occure in a server")
+        console.error("Failed to start server:", error.message);
+        process.exit(1);
     }
-})
+}
+
+startServer();

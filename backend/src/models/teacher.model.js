@@ -4,14 +4,25 @@ const teacherSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: true,
+            required: [true, "Teacher name is required"],
             trim: true
         },
 
         phone: {
             type: String,
-            required: true,
-            trim: true
+            required: [true, "Phone number is required"],
+            trim: true,
+            match: [/^\d{10}$/, "Phone number must be 10 digits"]
+        },
+
+        whatsappNumber: {
+            type: String,
+            required: [true, "WhatsApp number is required"],
+            trim: true,
+            match: [
+                /^\d{10}$/,
+                "WhatsApp number must be 10 digits"
+            ]
         },
 
         email: {
@@ -22,7 +33,7 @@ const teacherSchema = new mongoose.Schema(
 
         subject: {
             type: String,
-            required: true,
+            required: [true, "Subject is required"],
             trim: true
         },
 
@@ -33,10 +44,13 @@ const teacherSchema = new mongoose.Schema(
 
         photo: {
             url: {
-                type: String
+                type: String,
+                trim: true
             },
+
             fileId: {
-                type: String
+                type: String,
+                trim: true
             }
         },
 
@@ -56,6 +70,4 @@ const teacherSchema = new mongoose.Schema(
     }
 );
 
-const Teacher = mongoose.model("Teacher", teacherSchema);
-
-module.exports = Teacher;
+module.exports = mongoose.model("Teacher", teacherSchema);

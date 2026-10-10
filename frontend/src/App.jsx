@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from 'react-router-dom'
 import { apiRequest } from './api'
 
 import Home from './pages/Home'
@@ -9,9 +14,13 @@ import AdmissionStatus from './pages/AdmissionStatus'
 
 import AdminLogin from './pages/AdminLogin'
 import AdminDashboard from './pages/AdminDashboard'
+
 import Students from './pages/Students'
 import StudentDetails from './pages/StudentDetails'
+
 import Teachers from './pages/Teachers'
+import TeacherDetails from './pages/TeacherDetails'
+
 import Admissions from './pages/Admissions'
 import FeePayments from './pages/FeePayments'
 import SalaryPayments from './pages/SalaryPayments'
@@ -20,10 +29,12 @@ import Notices from './pages/Notices'
 import Reports from './pages/Reports'
 import Gallery from './pages/Gallery'
 
-// Protect all admin routes using existing authentication
+
+// Protect all admin routes
 function AdminRoute({ children }) {
   const [authorized, setAuthorized] = useState(false)
   const [checking, setChecking] = useState(true)
+
   const location = useLocation()
 
   useEffect(() => {
@@ -31,8 +42,8 @@ function AdminRoute({ children }) {
 
     async function verifyAdmin() {
       try {
-        // Existing protected admin API verifies the session.
-        // apiRequest also attempts refresh if the access token expires.
+        // Backend verifies the admin session.
+        // apiRequest handles the existing token refresh flow.
         await apiRequest('/dashboard')
 
         if (active) {
@@ -51,6 +62,7 @@ function AdminRoute({ children }) {
 
     setAuthorized(false)
     setChecking(true)
+
     verifyAdmin()
 
     return () => {
@@ -67,32 +79,57 @@ function AdminRoute({ children }) {
   }
 
   if (!authorized) {
-    return <Navigate to="/admin/login" replace />
+    return (
+      <Navigate
+        to="/admin/login"
+        replace
+        state={{ from: location }}
+      />
+    )
   }
 
   return children
 }
 
+
 function App() {
   return (
     <Routes>
       {/* Public pages */}
-      <Route path="/" element={<Home />} />
-      <Route path="/admission" element={<Admission />} />
+      <Route
+        path="/"
+        element={<Home />}
+      />
+
+      <Route
+        path="/admission"
+        element={<Admission />}
+      />
+
       <Route
         path="/admission-success"
         element={<AdmissionSuccess />}
       />
+
       <Route
         path="/admission-status"
         element={<AdmissionStatus />}
       />
-      <Route path="/gallery" element={<Gallery />} />
 
-      {/* Admin login is public */}
-      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route
+        path="/gallery"
+        element={<Gallery />}
+      />
 
-      {/* All admin pages require authentication */}
+
+      {/* Public admin login */}
+      <Route
+        path="/admin/login"
+        element={<AdminLogin />}
+      />
+
+
+      {/* Admin Dashboard */}
       <Route
         path="/admin/dashboard"
         element={
@@ -102,6 +139,8 @@ function App() {
         }
       />
 
+
+      {/* Students */}
       <Route
         path="/admin/students"
         element={
@@ -111,6 +150,8 @@ function App() {
         }
       />
 
+
+      {/* Student Details */}
       <Route
         path="/admin/student-details"
         element={
@@ -120,6 +161,8 @@ function App() {
         }
       />
 
+
+      {/* Teachers */}
       <Route
         path="/admin/teachers"
         element={
@@ -129,6 +172,19 @@ function App() {
         }
       />
 
+
+      {/* Teacher Details - Admin Only */}
+      <Route
+        path="/admin/teacher-details"
+        element={
+          <AdminRoute>
+            <TeacherDetails />
+          </AdminRoute>
+        }
+      />
+
+
+      {/* Admissions */}
       <Route
         path="/admin/admissions"
         element={
@@ -138,6 +194,8 @@ function App() {
         }
       />
 
+
+      {/* Fee Payments */}
       <Route
         path="/admin/fees"
         element={
@@ -147,6 +205,8 @@ function App() {
         }
       />
 
+
+      {/* Salary Payments */}
       <Route
         path="/admin/salaries"
         element={
@@ -156,6 +216,8 @@ function App() {
         }
       />
 
+
+      {/* Exams and Results */}
       <Route
         path="/admin/exams"
         element={
@@ -165,6 +227,8 @@ function App() {
         }
       />
 
+
+      {/* Notices */}
       <Route
         path="/admin/notices"
         element={
@@ -174,6 +238,8 @@ function App() {
         }
       />
 
+
+      {/* Reports */}
       <Route
         path="/admin/reports"
         element={
@@ -183,8 +249,12 @@ function App() {
         }
       />
 
+
       {/* Unknown route */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
     </Routes>
   )
 }

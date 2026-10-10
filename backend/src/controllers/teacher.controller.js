@@ -1,4 +1,5 @@
 const Teacher = require("../models/teacher.model");
+
 const {
     uploadPhoto,
     deletePhoto
@@ -11,6 +12,7 @@ async function createTeacher(req, res) {
         const {
             name,
             phone,
+            whatsappNumber,
             email,
             subject,
             address,
@@ -20,6 +22,7 @@ async function createTeacher(req, res) {
 
         let photo;
 
+        // Upload teacher photo to ImageKit
         if (req.file) {
             try {
                 photo = await uploadPhoto(
@@ -29,7 +32,9 @@ async function createTeacher(req, res) {
             } catch (uploadError) {
                 return res.status(400).json({
                     message: "Photo upload failed",
-                    error: uploadError.message || "Invalid image upload"
+                    error:
+                        uploadError.message ||
+                        "Invalid image upload"
                 });
             }
         }
@@ -37,6 +42,7 @@ async function createTeacher(req, res) {
         const teacher = await Teacher.create({
             name,
             phone,
+            whatsappNumber,
             email,
             subject,
             address,
@@ -52,6 +58,12 @@ async function createTeacher(req, res) {
 
     } catch (error) {
         console.error("Create teacher error:", error);
+
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
 
         return res.status(500).json({
             message: "Internal server error"
@@ -101,6 +113,12 @@ async function getTeacherById(req, res) {
     } catch (error) {
         console.error("Get teacher error:", error);
 
+        if (error.name === "CastError") {
+            return res.status(400).json({
+                message: "Invalid teacher ID"
+            });
+        }
+
         return res.status(500).json({
             message: "Internal server error"
         });
@@ -114,6 +132,7 @@ async function updateTeacher(req, res) {
         const {
             name,
             phone,
+            whatsappNumber,
             email,
             subject,
             address,
@@ -121,9 +140,6 @@ async function updateTeacher(req, res) {
             status
         } = req.body;
 
-        const updateData = {};
-
-        // Find existing teacher first
         const existingTeacher = await Teacher.findById(
             req.params.id
         );
@@ -134,36 +150,32 @@ async function updateTeacher(req, res) {
             });
         }
 
-        // Upload new photo
-        if (req.file) {
-            try {
-                const newPhoto = await uploadPhoto(
-                    req.file,
-                    "teachers"
-                );
+        const updateData = {};
 
-                // Delete old photo from ImageKit
-                if (existingTeacher.photo?.fileId) {
-                    await deletePhoto(
-                        existingTeacher.photo.fileId
-                    );
-                }
-
-                updateData.photo = newPhoto;
-
-            } catch (uploadError) {
-                return res.status(400).json({
-                    message: "Photo upload failed",
-                    error: uploadError.message || "Invalid image upload"
-                });
-            }
+        // Update fields only when provided
+        if (name !== undefined) {
+            updateData.name = name;
         }
 
-        if (name !== undefined) updateData.name = name;
-        if (phone !== undefined) updateData.phone = phone;
-        if (email !== undefined) updateData.email = email;
-        if (subject !== undefined) updateData.subject = subject;
-        if (address !== undefined) updateData.address = address;
+        if (phone !== undefined) {
+            updateData.phone = phone;
+        }
+
+        if (whatsappNumber !== undefined) {
+            updateData.whatsappNumber = whatsappNumber;
+        }
+
+        if (email !== undefined) {
+            updateData.email = email;
+        }
+
+        if (subject !== undefined) {
+            updateData.subject = subject;
+        }
+
+        if (address !== undefined) {
+            updateData.address = address;
+        }
 
         if (joiningDate !== undefined) {
             updateData.joiningDate = joiningDate;
@@ -171,6 +183,27 @@ async function updateTeacher(req, res) {
 
         if (status !== undefined) {
             updateData.status = status.toLowerCase();
+        }
+
+        // Upload a new photo if provided
+        if (req.file) {
+            let newPhoto;
+
+            try {
+                newPhoto = await uploadPhoto(
+                    req.file,
+                    "teachers"
+                );
+            } catch (uploadError) {
+                return res.status(400).json({
+                    message: "Photo upload failed",
+                    error:
+                        uploadError.message ||
+                        "Invalid image upload"
+                });
+            }
+
+            updateData.photo = newPhoto;
         }
 
         const teacher = await Teacher.findByIdAndUpdate(
@@ -182,6 +215,24 @@ async function updateTeacher(req, res) {
             }
         );
 
+        // Delete old ImageKit photo only after successful update
+        if (
+            req.file &&
+            existingTeacher.photo?.fileId &&
+            teacher
+        ) {
+            try {
+                await deletePhoto(
+                    existingTeacher.photo.fileId
+                );
+            } catch (deleteError) {
+                console.error(
+                    "Old teacher photo deletion failed:",
+                    deleteError
+                );
+            }
+        }
+
         return res.status(200).json({
             message: "Teacher updated successfully",
             teacher
@@ -189,6 +240,18 @@ async function updateTeacher(req, res) {
 
     } catch (error) {
         console.error("Update teacher error:", error);
+
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+
+        if (error.name === "CastError") {
+            return res.status(400).json({
+                message: "Invalid teacher ID"
+            });
+        }
 
         return res.status(500).json({
             message: "Internal server error"
@@ -210,11 +273,18 @@ async function deleteTeacher(req, res) {
             });
         }
 
-        // Delete photo from ImageKit
+        // Delete teacher photo from ImageKit
         if (teacher.photo?.fileId) {
-            await deletePhoto(
-                teacher.photo.fileId
-            );
+            try {
+                await deletePhoto(
+                    teacher.photo.fileId
+                );
+            } catch (deleteError) {
+                console.error(
+                    "Teacher photo deletion failed:",
+                    deleteError
+                );
+            }
         }
 
         return res.status(200).json({
@@ -223,6 +293,12 @@ async function deleteTeacher(req, res) {
 
     } catch (error) {
         console.error("Delete teacher error:", error);
+
+        if (error.name === "CastError") {
+            return res.status(400).json({
+                message: "Invalid teacher ID"
+            });
+        }
 
         return res.status(500).json({
             message: "Internal server error"

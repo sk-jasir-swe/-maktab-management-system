@@ -6,6 +6,7 @@ import '../App.css'
 const initialForm = {
   name: '',
   phone: '',
+  whatsappNumber: '',
   email: '',
   subject: '',
   address: '',
@@ -36,7 +37,6 @@ function Teachers() {
       setError('')
 
       const response = await apiRequest('/teachers')
-
       setTeachers(response.teachers || [])
     } catch (err) {
       setError(err.message || 'Unable to load teachers.')
@@ -71,6 +71,7 @@ function Teachers() {
     setFormData({
       name: teacher.name || '',
       phone: teacher.phone || '',
+      whatsappNumber: teacher.whatsappNumber || '',
       email: teacher.email || '',
       subject: teacher.subject || '',
       address: teacher.address || '',
@@ -104,6 +105,24 @@ function Teachers() {
 
     if (saving) return
 
+    const phone = formData.phone.trim()
+    const whatsappNumber = formData.whatsappNumber.trim()
+
+    if (!/^\d{10}$/.test(phone)) {
+      setError('Phone number must contain exactly 10 digits.')
+      return
+    }
+
+    if (!/^\d{10}$/.test(whatsappNumber)) {
+      setError('WhatsApp number must contain exactly 10 digits.')
+      return
+    }
+
+    if (photo && photo.size > 5 * 1024 * 1024) {
+      setError('Photo size must not exceed 5 MB.')
+      return
+    }
+
     try {
       setSaving(true)
       setError('')
@@ -111,7 +130,11 @@ function Teachers() {
 
       const body = new FormData()
 
-      Object.entries(formData).forEach(([key, value]) => {
+      Object.entries({
+        ...formData,
+        phone,
+        whatsappNumber,
+      }).forEach(([key, value]) => {
         body.append(key, value)
       })
 
@@ -177,6 +200,7 @@ function Teachers() {
     const matchesSearch = [
       teacher.name,
       teacher.phone,
+      teacher.whatsappNumber,
       teacher.email,
       teacher.subject,
     ].some((value) =>
@@ -201,7 +225,7 @@ function Teachers() {
     'mt-2 w-full rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
+    <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
@@ -284,10 +308,7 @@ function Teachers() {
               className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-white/50">
-                  {item.label}
-                </p>
-
+                <p className="text-sm text-white/50">{item.label}</p>
                 <span className="text-2xl">{item.icon}</span>
               </div>
 
@@ -323,6 +344,7 @@ function Teachers() {
 
             <form onSubmit={handleSubmit}>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Name */}
                 <div>
                   <label htmlFor="name" className="text-sm text-white/75">
                     Teacher Name *
@@ -339,6 +361,7 @@ function Teachers() {
                   />
                 </div>
 
+                {/* Phone */}
                 <div>
                   <label htmlFor="phone" className="text-sm text-white/75">
                     Phone Number *
@@ -348,14 +371,42 @@ function Teachers() {
                     id="phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
                     value={formData.phone}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="Enter phone number"
+                    placeholder="10-digit phone number"
                     required
                   />
                 </div>
 
+                {/* WhatsApp */}
+                <div>
+                  <label
+                    htmlFor="whatsappNumber"
+                    className="text-sm text-white/75"
+                  >
+                    WhatsApp Number *
+                  </label>
+
+                  <input
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="10-digit WhatsApp number"
+                    required
+                  />
+                </div>
+
+                {/* Email */}
                 <div>
                   <label htmlFor="email" className="text-sm text-white/75">
                     Email Address
@@ -372,6 +423,7 @@ function Teachers() {
                   />
                 </div>
 
+                {/* Subject */}
                 <div>
                   <label htmlFor="subject" className="text-sm text-white/75">
                     Subject *
@@ -388,6 +440,7 @@ function Teachers() {
                   />
                 </div>
 
+                {/* Joining Date */}
                 <div>
                   <label
                     htmlFor="joiningDate"
@@ -406,6 +459,7 @@ function Teachers() {
                   />
                 </div>
 
+                {/* Status */}
                 <div>
                   <label htmlFor="status" className="text-sm text-white/75">
                     Status *
@@ -424,11 +478,9 @@ function Teachers() {
                   </select>
                 </div>
 
+                {/* Address */}
                 <div className="sm:col-span-2 lg:col-span-3">
-                  <label
-                    htmlFor="address"
-                    className="text-sm text-white/75"
-                  >
+                  <label htmlFor="address" className="text-sm text-white/75">
                     Address
                   </label>
 
@@ -443,6 +495,7 @@ function Teachers() {
                   />
                 </div>
 
+                {/* Photo */}
                 <div className="sm:col-span-2 lg:col-span-3">
                   <label htmlFor="photo" className="text-sm text-white/75">
                     Teacher Photo (Optional)
@@ -470,6 +523,7 @@ function Teachers() {
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="submit"
@@ -502,8 +556,8 @@ function Teachers() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by name, phone, email or subject..."
-            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
+            placeholder="Search name, phone, WhatsApp, email or subject..."
+            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
           />
 
           <select
@@ -526,7 +580,7 @@ function Teachers() {
         </section>
 
         {/* Teachers Table */}
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/4 backdrop-blur-xl">
+        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-6 py-5">
             <h2 className="text-lg font-semibold">All Teachers</h2>
 
@@ -553,24 +607,24 @@ function Teachers() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-212.5 text-left text-sm">
-                <thead className="bg-white/3 text-xs uppercase tracking-wider text-white/45">
+              <table className="w-full min-w-225 text-left text-sm">
+                <thead className="bg-white/5 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4 font-medium">Teacher</th>
                     <th className="px-6 py-4 font-medium">Subject</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
-                    <th className="px-6 py-4 font-medium">Email</th>
+                    <th className="px-6 py-4 font-medium">WhatsApp</th>
                     <th className="px-6 py-4 font-medium">Joining Date</th>
                     <th className="px-6 py-4 font-medium">Status</th>
                     <th className="px-6 py-4 font-medium">Actions</th>
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-white/6">
+                <tbody className="divide-y divide-white/5">
                   {filteredTeachers.map((teacher) => (
                     <tr
                       key={teacher._id}
-                      className="transition hover:bg-white/2.5"
+                      className="transition hover:bg-white/5"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -586,9 +640,14 @@ function Teachers() {
                             </div>
                           )}
 
-                          <p className="font-medium text-white">
-                            {teacher.name}
-                          </p>
+                          <div>
+                            <p className="font-medium text-white">
+                              {teacher.name}
+                            </p>
+                            <p className="mt-1 text-xs text-white/40">
+                              {teacher.email || 'No email'}
+                            </p>
+                          </div>
                         </div>
                       </td>
 
@@ -601,12 +660,14 @@ function Teachers() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {teacher.email || '—'}
+                        {teacher.whatsappNumber || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
                         {teacher.joiningDate
-                          ? new Date(teacher.joiningDate).toLocaleDateString()
+                          ? new Date(
+                              teacher.joiningDate,
+                            ).toLocaleDateString()
                           : '—'}
                       </td>
 

@@ -29,7 +29,7 @@ function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-6 py-10 text-white sm:py-16">
+    <div className="min-h-screen bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-6 py-10 text-white sm:py-16">
       <div className="mx-auto max-w-7xl">
 
         {/* Back Button */}

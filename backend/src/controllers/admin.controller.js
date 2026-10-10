@@ -59,8 +59,8 @@ async function loginAdmin(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             maxAge: 15 * 60 * 1000
         });
 
@@ -136,8 +136,8 @@ async function refreshAccessToken(req, res) {
 
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "lax",
+            secure: true,
+            sameSite: "none",
             maxAge: 15 * 60 * 1000
         });
 

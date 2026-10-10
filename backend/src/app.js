@@ -20,7 +20,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: true,
+    origin: "https://maktap.vercel.app",
     credentials: true
 }));
 

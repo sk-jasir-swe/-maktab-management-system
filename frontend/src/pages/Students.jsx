@@ -10,6 +10,7 @@ const initialForm = {
   dateOfBirth: '',
   gender: 'male',
   phone: '',
+  whatsappNumber: '',
   address: '',
   admissionDate: new Date().toISOString().split('T')[0],
   classTime: 'morning',
@@ -39,7 +40,6 @@ function Students() {
       setError('')
 
       const response = await apiRequest('/students')
-
       setStudents(response.students || [])
     } catch (err) {
       setError(err.message || 'Unable to load students.')
@@ -80,6 +80,7 @@ function Students() {
         : '',
       gender: student.gender || 'male',
       phone: student.phone || '',
+      whatsappNumber: student.whatsappNumber || '',
       address: student.address || '',
       admissionDate: student.admissionDate
         ? new Date(student.admissionDate).toISOString().split('T')[0]
@@ -207,6 +208,17 @@ function Students() {
   const inputClass =
     'mt-2 w-full rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
+  function formatClassTime(classTime) {
+    if (classTime === 'after_asr') return 'After Asr'
+    if (classTime === 'after_maghrib') return 'After Maghrib'
+    if (classTime === 'morning') return 'Morning'
+    return classTime || '—'
+  }
+
+  function formatDate(date) {
+    return date ? new Date(date).toLocaleDateString() : '—'
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background glow */}
@@ -291,10 +303,7 @@ function Students() {
               className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl"
             >
               <div className="flex items-center justify-between">
-                <p className="text-sm text-white/50">
-                  {item.label}
-                </p>
-
+                <p className="text-sm text-white/50">{item.label}</p>
                 <span className="text-2xl">{item.icon}</span>
               </div>
 
@@ -432,6 +441,30 @@ function Students() {
                     onChange={handleChange}
                     className={inputClass}
                     placeholder="Enter phone number"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="whatsappNumber"
+                    className="text-sm text-white/75"
+                  >
+                    WhatsApp Number *
+                  </label>
+
+                  <input
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    type="tel"
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="Enter WhatsApp number"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
                     required
                   />
                 </div>
@@ -516,7 +549,7 @@ function Students() {
 
                 <div className="sm:col-span-2 lg:col-span-3">
                   <label htmlFor="photo" className="text-sm text-white/75">
-                    Student Photo {editingId ? '(Optional)' : '(Optional)'}
+                    Student Photo (Optional)
                   </label>
 
                   <input
@@ -630,6 +663,7 @@ function Students() {
                     <th className="px-6 py-4 font-medium">Student</th>
                     <th className="px-6 py-4 font-medium">Father Name</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
+                    <th className="px-6 py-4 font-medium">WhatsApp</th>
                     <th className="px-6 py-4 font-medium">Class Time</th>
                     <th className="px-6 py-4 font-medium">Admission Date</th>
                     <th className="px-6 py-4 font-medium">Status</th>
@@ -678,19 +712,15 @@ function Students() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.classTime === 'after_asr'
-                          ? 'After Asr'
-                          : student.classTime === 'after_maghrib'
-                            ? 'After Maghrib'
-                            : student.classTime === 'morning'
-                              ? 'Morning'
-                              : student.classTime || '—'}
+                        {student.whatsappNumber || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.admissionDate
-                          ? new Date(student.admissionDate).toLocaleDateString()
-                          : '—'}
+                        {formatClassTime(student.classTime)}
+                      </td>
+
+                      <td className="px-6 py-4 text-white/65">
+                        {formatDate(student.admissionDate)}
                       </td>
 
                       <td className="px-6 py-4">

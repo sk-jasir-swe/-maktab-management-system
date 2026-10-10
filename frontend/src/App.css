@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* Global styles */
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  color: #ffffff;
+  background: #071711;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: #071711;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  color: #071711;
+  background: #6ee7b7;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #071711;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #24634b;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #34d399;
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 65px;
+  }
+}
+
+/* Admission Announcement Scrolling Bar */
+@keyframes admission-marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.admission-marquee {
+  animation: admission-marquee 25s linear infinite;
+  will-change: transform;
+}
+
+.admission-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admission-marquee {
+    animation: none;
+  }
+}
+
+@keyframes admission-marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.admission-marquee {
+  animation: admission-marquee 25s linear infinite;
+  will-change: transform;
+}
+
+.admission-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admission-marquee {
+    animation: none;
+  }
+}

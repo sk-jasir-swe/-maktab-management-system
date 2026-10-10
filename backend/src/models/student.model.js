@@ -30,7 +30,17 @@ const studentSchema = new mongoose.Schema(
 
         phone: {
             type: String,
-            trim: true
+            trim: true,
+            match: [/^\d{10}$/, "Phone number must contain exactly 10 digits"]
+        },
+
+        whatsappNumber: {
+            type: String,
+            trim: true,
+            match: [
+                /^\d{10}$/,
+                "WhatsApp number must contain exactly 10 digits"
+            ]
         },
 
         address: {

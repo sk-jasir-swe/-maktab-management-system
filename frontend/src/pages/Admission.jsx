@@ -10,6 +10,7 @@ const initialFormData = {
   dateOfBirth: '',
   gender: '',
   phone: '',
+  whatsappNumber: '',
   address: '',
   classTime: '',
 }
@@ -23,9 +24,16 @@ function Admission() {
   function handleChange(event) {
     const { name, value } = event.target
 
+    let updatedValue = value
+
+    // Phone aur WhatsApp number mein sirf 10 digits allow honge
+    if (name === 'phone' || name === 'whatsappNumber') {
+      updatedValue = value.replace(/\D/g, '').slice(0, 10)
+    }
+
     setFormData((previous) => ({
       ...previous,
-      [name]: value,
+      [name]: updatedValue,
     }))
 
     setError('')
@@ -35,6 +43,18 @@ function Admission() {
     event.preventDefault()
 
     if (loading) return
+
+    // Frontend phone number validation
+    if (!/^\d{10}$/.test(formData.phone)) {
+      setError('Phone number must contain exactly 10 digits.')
+      return
+    }
+
+    // Frontend WhatsApp number validation
+    if (!/^\d{10}$/.test(formData.whatsappNumber)) {
+      setError('WhatsApp number must contain exactly 10 digits.')
+      return
+    }
 
     setLoading(true)
     setError('')
@@ -75,7 +95,9 @@ function Admission() {
       await navigator.clipboard.writeText(applicationNumber)
       alert('Application number copied!')
     } catch {
-      setError('Unable to copy. Please note your application number manually.')
+      setError(
+        'Unable to copy. Please note your application number manually.',
+      )
     }
   }
 
@@ -305,7 +327,7 @@ function Admission() {
                   </select>
                 </div>
 
-                {/* Phone */}
+                {/* Phone number */}
                 <div>
                   <label className={labelClass} htmlFor="phone">
                     Phone Number *
@@ -316,12 +338,49 @@ function Admission() {
                     id="phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    minLength={10}
+                    maxLength={10}
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="Enter phone number"
-                    autoComplete="tel"
+                    placeholder="Enter 10-digit phone number"
+                    autoComplete="tel-national"
+                    title="Please enter exactly 10 digits."
                     required
                   />
+
+                  <p className="mt-1 text-xs text-white/40">
+                    Enter exactly 10 digits.
+                  </p>
+                </div>
+
+                {/* WhatsApp number */}
+                <div>
+                  <label className={labelClass} htmlFor="whatsappNumber">
+                    WhatsApp Number *
+                  </label>
+
+                  <input
+                    className={inputClass}
+                    id="whatsappNumber"
+                    name="whatsappNumber"
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    minLength={10}
+                    maxLength={10}
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    placeholder="Enter 10-digit WhatsApp number"
+                    autoComplete="off"
+                    title="Please enter exactly 10 digits."
+                    required
+                  />
+
+                  <p className="mt-1 text-xs text-white/40">
+                    Enter exactly 10 digits. Both numbers can be the same.
+                  </p>
                 </div>
 
                 {/* Class timing */}

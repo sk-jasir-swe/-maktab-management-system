@@ -25,13 +25,38 @@ async function createAdmission(req, res) {
             dateOfBirth,
             gender,
             phone,
+            whatsappNumber,
             address,
             classTime
         } = req.body;
 
-        if (!studentName || !fatherName || !phone || !classTime) {
+        // Required field validation
+        if (
+            !studentName ||
+            !fatherName ||
+            !phone ||
+            !whatsappNumber ||
+            !classTime
+        ) {
             return res.status(400).json({
-                message: "Student name, father name, phone and class time are required"
+                message: "Student name, father name, phone number, WhatsApp number and class time are required"
+            });
+        }
+
+        // Validate phone number
+        if (typeof phone !== "string" || !/^\d{10}$/.test(phone.trim())) {
+            return res.status(400).json({
+                message: "Phone number must contain exactly 10 digits"
+            });
+        }
+
+        // Validate WhatsApp number
+        if (
+            typeof whatsappNumber !== "string" ||
+            !/^\d{10}$/.test(whatsappNumber.trim())
+        ) {
+            return res.status(400).json({
+                message: "WhatsApp number must contain exactly 10 digits"
             });
         }
 
@@ -45,12 +70,13 @@ async function createAdmission(req, res) {
             try {
                 admission = await Admission.create({
                     applicationNumber: generateApplicationNumber(),
-                    studentName,
-                    fatherName,
+                    studentName: studentName.trim(),
+                    fatherName: fatherName.trim(),
                     motherName,
                     dateOfBirth,
                     gender,
                     phone: phone.trim(),
+                    whatsappNumber: whatsappNumber.trim(),
                     address,
                     classTime,
                     status: "pending"
@@ -82,6 +108,12 @@ async function createAdmission(req, res) {
     } catch (error) {
         console.error("Create admission error:", error);
 
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
+
         return res.status(500).json({
             message: "Internal server error"
         });
@@ -108,6 +140,12 @@ async function checkAdmissionStatus(req, res) {
             applicationNumber.trim().toUpperCase();
 
         const normalizedPhone = phone.trim();
+
+        if (!/^\d{10}$/.test(normalizedPhone)) {
+            return res.status(400).json({
+                message: "Phone number must contain exactly 10 digits"
+            });
+        }
 
         const admission = await Admission.findOne({
             applicationNumber: normalizedApplicationNumber,
@@ -241,20 +279,21 @@ async function updateAdmissionStatus(req, res) {
         await admission.save({ session });
 
         const student = await Student.create(
-            [
-                {
-                    name: admission.studentName,
-                    fatherName: admission.fatherName,
-                    motherName: admission.motherName,
-                    dateOfBirth: admission.dateOfBirth,
-                    gender: admission.gender,
-                    phone: admission.phone,
-                    address: admission.address,
-                    classTime: admission.classTime
-                }
-            ],
-            { session }
-        );
+    [
+        {
+            name: admission.studentName,
+            fatherName: admission.fatherName,
+            motherName: admission.motherName,
+            dateOfBirth: admission.dateOfBirth,
+            gender: admission.gender,
+            phone: admission.phone,
+            whatsappNumber: admission.whatsappNumber,
+            address: admission.address,
+            classTime: admission.classTime
+        }
+    ],
+    { session }
+);
 
         await session.commitTransaction();
 

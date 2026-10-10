@@ -40,7 +40,18 @@ const admissionSchema = new mongoose.Schema(
         phone: {
             type: String,
             required: true,
-            trim: true
+            trim: true,
+            match: [/^\d{10}$/, "Phone number must contain exactly 10 digits"]
+        },
+
+        whatsappNumber: {
+            type: String,
+            required: true,
+            trim: true,
+            match: [
+                /^\d{10}$/,
+                "WhatsApp number must contain exactly 10 digits"
+            ]
         },
 
         address: {

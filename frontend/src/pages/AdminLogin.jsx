@@ -51,25 +51,25 @@ function AdminLogin() {
   }
 
   const inputClass =
-    'mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-emerald-300/50 focus:ring-2 focus:ring-emerald-300/10'
+    'mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#071711] px-4 py-10 text-white">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-10 text-white">
       {/* Background Glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-emerald-500/15 blur-[120px]" />
-        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
+        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-7 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-10">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-3xl text-emerald-300">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-3xl text-cyan-300">
             ☪
           </div>
 
-          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">
+          <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
             Al-Noor Maktab
           </p>
 
@@ -139,7 +139,7 @@ function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-emerald-400 px-6 py-3.5 font-semibold text-[#071711] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className="w-full rounded-xl bg-cyan-400 px-6 py-3.5 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {loading ? 'Signing In...' : 'Sign In →'}
           </button>
@@ -148,7 +148,7 @@ function AdminLogin() {
         <div className="mt-7 border-t border-white/10 pt-6 text-center">
           <Link
             to="/"
-            className="text-sm text-emerald-300 transition hover:text-emerald-200"
+            className="text-sm text-cyan-300 transition hover:text-cyan-200"
           >
             ← Back to Home
           </Link>

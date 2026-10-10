@@ -63,16 +63,16 @@ function Admission() {
   }
 
   const inputClass =
-    'mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-emerald-300/50 focus:ring-2 focus:ring-emerald-300/10'
+    'mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
   const labelClass = 'text-sm font-medium text-white/75'
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#071711] px-4 py-10 text-white sm:px-6">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-10 text-white sm:px-6">
       {/* Background effects */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-emerald-500/15 blur-[120px]" />
-        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
+        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl">
@@ -80,12 +80,12 @@ function Admission() {
         <div className="mb-8 flex items-center justify-between">
           <Link
             to="/"
-            className="text-sm text-emerald-300 transition hover:text-emerald-200"
+            className="text-sm text-cyan-300 transition hover:text-cyan-200"
           >
             ← Back to Home
           </Link>
 
-          <span className="rounded-full border border-emerald-300/20 bg-emerald-300/[0.07] px-4 py-2 text-xs text-emerald-200">
+          <span className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-xs text-cyan-200">
             Admission Application
           </span>
         </div>
@@ -93,11 +93,11 @@ function Admission() {
         {/* Form card */}
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-10">
           <div className="mb-8">
-            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-300/10 text-2xl text-emerald-300">
+            <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl text-cyan-300">
               ☪
             </div>
 
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
               Join Our Maktab
             </p>
 
@@ -206,19 +206,19 @@ function Admission() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="" disabled className="bg-[#0b2017]">
+                  <option value="" disabled className="bg-[#111935]">
                     Select gender
                   </option>
 
-                  <option value="male" className="bg-[#0b2017]">
+                  <option value="male" className="bg-[#111935]">
                     Male
                   </option>
 
-                  <option value="female" className="bg-[#0b2017]">
+                  <option value="female" className="bg-[#111935]">
                     Female
                   </option>
 
-                  <option value="other" className="bg-[#0b2017]">
+                  <option value="other" className="bg-[#111935]">
                     Other
                   </option>
                 </select>
@@ -257,19 +257,19 @@ function Admission() {
                   onChange={handleChange}
                   required
                 >
-                  <option value="" disabled className="bg-[#0b2017]">
+                  <option value="" disabled className="bg-[#111935]">
                     Select class timing
                   </option>
 
-                  <option value="morning" className="bg-[#0b2017]">
+                  <option value="morning" className="bg-[#111935]">
                     Morning
                   </option>
 
-                  <option value="after_asr" className="bg-[#0b2017]">
+                  <option value="after_asr" className="bg-[#111935]">
                     After Asr
                   </option>
 
-                  <option value="after_maghrib" className="bg-[#0b2017]">
+                  <option value="after_maghrib" className="bg-[#111935]">
                     After Maghrib
                   </option>
                 </select>
@@ -298,7 +298,7 @@ function Admission() {
             <button
               type="submit"
               disabled={loading}
-              className="mt-7 w-full rounded-xl bg-emerald-400 px-6 py-3.5 font-semibold text-[#071711] transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-7 w-full rounded-xl bg-cyan-400 px-6 py-3.5 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Submitting Application...' : 'Submit Application →'}
             </button>

@@ -29,20 +29,20 @@ function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null)
 
   return (
-    <div className="min-h-screen bg-[#071711] px-6 py-10 text-white sm:py-16">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-6 py-10 text-white sm:py-16">
       <div className="mx-auto max-w-7xl">
 
         {/* Back Button */}
         <Link
           to="/"
-          className="mb-10 inline-flex items-center gap-2 text-sm text-emerald-300 transition hover:text-white"
+          className="mb-10 inline-flex items-center gap-2 text-sm text-cyan-300 transition hover:text-white"
         >
           ← Back to Home
         </Link>
 
         {/* Page Header */}
         <div className="mb-10">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
             Our Memories
           </p>
 
@@ -63,7 +63,7 @@ function Gallery() {
               type="button"
               key={item.image}
               onClick={() => setSelectedImage(item)}
-              className="group overflow-hidden rounded-3xl border border-white/10 bg-white/4 text-left transition hover:-translate-y-1 hover:border-emerald-300/40"
+              className="group overflow-hidden rounded-3xl border border-white/10 bg-white/4 text-left transition hover:-translate-y-1 hover:border-cyan-300/40"
             >
               <div className="relative h-64 overflow-hidden">
                 <img
@@ -73,7 +73,7 @@ function Gallery() {
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
 
-                <div className="absolute inset-0 bg-linear-to-t from-[#061b13] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#0b1026] via-transparent to-transparent" />
 
                 <span className="absolute bottom-4 right-4 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-xs text-white backdrop-blur-md">
                   View Photo ↗
@@ -81,7 +81,7 @@ function Gallery() {
               </div>
 
               <div className="p-5">
-                <h2 className="text-lg font-bold text-emerald-200">
+                <h2 className="text-lg font-bold text-cyan-200">
                   {item.title}
                 </h2>
 
@@ -101,7 +101,7 @@ function Gallery() {
           onClick={() => setSelectedImage(null)}
         >
           <div
-            className="relative w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-[#071711]"
+            className="relative w-full max-w-4xl overflow-hidden rounded-3xl border border-white/10 bg-[#0b1026]"
             onClick={(event) => event.stopPropagation()}
           >
             <button

@@ -138,11 +138,11 @@ function Admissions() {
   ]
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#071711] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       <main className="relative z-10 mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
@@ -151,12 +151,12 @@ function Admissions() {
           <div>
             <Link
               to="/admin/dashboard"
-              className="text-sm text-emerald-300 transition hover:text-emerald-200"
+              className="text-sm text-cyan-300 transition hover:text-cyan-200"
             >
               ← Back to Dashboard
             </Link>
 
-            <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
               Administration
             </p>
 
@@ -191,7 +191,7 @@ function Admissions() {
         {success && (
           <div
             role="status"
-            className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200"
+            className="mb-6 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-200"
           >
             {success}
           </div>
@@ -209,7 +209,7 @@ function Admissions() {
                 <span className="text-2xl">{item.icon}</span>
               </div>
 
-              <p className="mt-4 text-3xl font-bold text-emerald-300">
+              <p className="mt-4 text-3xl font-bold text-cyan-300">
                 {loading ? '...' : item.value}
               </p>
             </div>
@@ -223,13 +223,13 @@ function Admissions() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search by student name, father name or phone..."
-            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-emerald-300/40"
+            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
           />
 
           <select
             value={filterStatus}
             onChange={(event) => setFilterStatus(event.target.value)}
-            className="rounded-xl border border-white/10 bg-[#0b2018] px-4 py-3 text-white outline-none focus:border-emerald-300/40"
+            className="rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none focus:border-cyan-300/40"
           >
             <option value="all">All Applications</option>
             <option value="pending">Pending</option>
@@ -323,7 +323,7 @@ function Admissions() {
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-medium ${
                             admission.status === 'accepted'
-                              ? 'bg-emerald-400/10 text-emerald-300'
+                              ? 'bg-cyan-400/10 text-cyan-300'
                               : admission.status === 'rejected'
                                 ? 'bg-red-400/10 text-red-300'
                                 : 'bg-amber-400/10 text-amber-300'
@@ -351,7 +351,7 @@ function Admissions() {
                                 onClick={() =>
                                   updateStatus(admission, 'accepted')
                                 }
-                                className="rounded-lg border border-emerald-300/20 px-3 py-2 text-xs font-medium text-emerald-300 transition hover:bg-emerald-300/10 disabled:opacity-50"
+                                className="rounded-lg border border-cyan-300/20 px-3 py-2 text-xs font-medium text-cyan-300 transition hover:bg-cyan-300/10 disabled:opacity-50"
                               >
                                 Accept
                               </button>
@@ -388,12 +388,12 @@ function Admissions() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="admission-details-title"
-              className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#0b2018] p-6 shadow-2xl sm:p-8"
+              className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#111935] p-6 shadow-2xl sm:p-8"
               onClick={(event) => event.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
                     Application Details
                   </p>
 
@@ -452,7 +452,7 @@ function Admissions() {
                     onClick={() =>
                       updateStatus(selectedAdmission, 'accepted')
                     }
-                    className="rounded-xl bg-emerald-400 px-5 py-3 font-semibold text-[#071711] transition hover:bg-emerald-300 disabled:opacity-50"
+                    className="rounded-xl bg-cyan-400 px-5 py-3 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:opacity-50"
                   >
                     Accept Admission
                   </button>

@@ -2,87 +2,117 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../api'
 
+const reports = [
+  { id: 'fees', label: 'Fee Collection', endpoint: '/reports/fees' },
+  {
+    id: 'monthly',
+    label: 'Monthly Fees',
+    endpoint: '/reports/fees/monthly',
+  },
+  {
+    id: 'salaries',
+    label: 'Teacher Salaries',
+    endpoint: '/reports/salaries',
+  },
+  {
+    id: 'students',
+    label: 'Students',
+    endpoint: '/reports/students',
+  },
+  {
+    id: 'admissions',
+    label: 'Admissions',
+    endpoint: '/reports/admissions',
+  },
+]
+
 function Reports() {
   const [activeTab, setActiveTab] = useState('fees')
+  const [refreshKey, setRefreshKey] = useState(0)
   const [reportData, setReportData] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [summary, setSummary] = useState(null)
 
-  const reports = [
-    { id: 'fees', label: 'Fee Collection', endpoint: '/reports/fees' },
-    {
-      id: 'monthly',
-      label: 'Monthly Fees',
-      endpoint: '/reports/fees/monthly',
-    },
-    {
-      id: 'salaries',
-      label: 'Teacher Salaries',
-      endpoint: '/reports/salaries',
-    },
-    {
-      id: 'students',
-      label: 'Students',
-      endpoint: '/reports/students',
-    },
-    {
-      id: 'admissions',
-      label: 'Admissions',
-      endpoint: '/reports/admissions',
-    },
-  ]
-
   useEffect(() => {
-    loadReport(activeTab)
-  }, [activeTab])
+    let ignore = false
+    const selectedReport = reports.find((report) => report.id === activeTab)
 
-  async function loadReport(tab) {
-    const selectedReport = reports.find((report) => report.id === tab)
+    async function fetchReport() {
+      if (!selectedReport) return
 
-    if (!selectedReport) return
+      try {
+        const response = await apiRequest(selectedReport.endpoint)
+        const data = response.data
+        let nextReportData
+        let nextSummary = null
 
+        if (activeTab === 'students') {
+          if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            throw new Error('Invalid student report data.')
+          }
+
+          nextSummary = data
+          nextReportData = [
+            {
+              label: 'Total Students',
+              count: data.totalStudents ?? 0,
+            },
+            {
+              label: 'Active Students',
+              count: data.activeStudents ?? 0,
+            },
+            {
+              label: 'Inactive Students',
+              count: data.inactiveStudents ?? 0,
+            },
+          ]
+        } else if (Array.isArray(data)) {
+          nextReportData = data
+        } else {
+          throw new Error('Invalid report data received from server.')
+        }
+
+        if (!ignore) {
+          setSummary(nextSummary)
+          setReportData(nextReportData)
+        }
+      } catch (err) {
+        if (!ignore) {
+          setError(err.message || 'Unable to load report.')
+        }
+      } finally {
+        if (!ignore) {
+          setLoading(false)
+        }
+      }
+    }
+
+    fetchReport()
+
+    return () => {
+      ignore = true
+    }
+  }, [activeTab, refreshKey])
+
+  function prepareReportLoad() {
     setLoading(true)
     setError('')
     setReportData([])
     setSummary(null)
+  }
 
-    try {
-      const response = await apiRequest(selectedReport.endpoint)
-      const data = response.data
+  function handleReportChange(tab) {
+    if (tab === activeTab) return
 
-      if (tab === 'students') {
-        if (!data || typeof data !== 'object' || Array.isArray(data)) {
-          throw new Error('Invalid student report data.')
-        }
+    prepareReportLoad()
+    setActiveTab(tab)
+  }
 
-        setSummary(data)
-
-        setReportData([
-          {
-            label: 'Total Students',
-            count: data.totalStudents ?? 0,
-          },
-          {
-            label: 'Active Students',
-            count: data.activeStudents ?? 0,
-          },
-          {
-            label: 'Inactive Students',
-            count: data.inactiveStudents ?? 0,
-          },
-        ])
-      } else if (Array.isArray(data)) {
-        setReportData(data)
-      } else {
-        throw new Error('Invalid report data received from server.')
-      }
-    } catch (err) {
-      setError(err.message || 'Unable to load report.')
-    } finally {
-      setLoading(false)
-    }
+  function handleRefresh() {
+    prepareReportLoad()
+    setRefreshKey((key) => key + 1)
   }
 
   function formatAmount(value) {
@@ -104,7 +134,7 @@ function Reports() {
 
   function getStatusClass(status) {
     if (['paid', 'accepted', 'active'].includes(status)) {
-      return 'bg-emerald-400/10 text-emerald-300'
+      return 'bg-cyan-400/10 text-cyan-300'
     }
 
     if (status === 'pending') {
@@ -255,11 +285,11 @@ function Reports() {
   }, 0)
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#071711] text-white">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       <main className="relative z-10 mx-auto max-w-7xl px-5 py-8 sm:px-8 sm:py-12">
@@ -267,12 +297,12 @@ function Reports() {
         <header className="mb-9">
           <Link
             to="/admin/dashboard"
-            className="text-sm text-emerald-300 transition hover:text-emerald-200"
+            className="text-sm text-cyan-300 transition hover:text-cyan-200"
           >
             ← Back to Dashboard
           </Link>
 
-          <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+          <p className="mt-5 text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
             Administration
           </p>
 
@@ -302,13 +332,13 @@ function Reports() {
               type="button"
               key={report.id}
               onClick={() => {
-                setActiveTab(report.id)
+                handleReportChange(report.id)
                 setSearch('')
               }}
               className={`rounded-2xl border p-5 text-left backdrop-blur-xl transition ${
                 activeTab === report.id
-                  ? 'border-emerald-300/40 bg-emerald-400/10'
-                  : 'border-white/10 bg-white/[0.04] hover:border-emerald-300/20 hover:bg-white/[0.06]'
+                  ? 'border-cyan-300/40 bg-cyan-400/10'
+                  : 'border-white/10 bg-white/[0.04] hover:border-cyan-300/20 hover:bg-white/[0.06]'
               }`}
             >
               <p className="text-sm text-white/50">Report</p>
@@ -331,7 +361,7 @@ function Reports() {
           <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl">
             <p className="text-sm text-white/50">Report Type</p>
 
-            <p className="mt-3 text-xl font-semibold text-emerald-300">
+            <p className="mt-3 text-xl font-semibold text-cyan-300">
               {currentReport?.label}
             </p>
           </div>
@@ -341,7 +371,7 @@ function Reports() {
               {activeTab === 'students' ? 'Total Students' : 'Report Categories'}
             </p>
 
-            <p className="mt-3 text-3xl font-bold text-emerald-300">
+            <p className="mt-3 text-3xl font-bold text-cyan-300">
               {loading
                 ? '...'
                 : activeTab === 'students'
@@ -361,7 +391,7 @@ function Reports() {
                     : 'Total Collection'}
                 </p>
 
-                <p className="mt-3 text-2xl font-bold text-emerald-300">
+                <p className="mt-3 text-2xl font-bold text-cyan-300">
                   {loading ? '...' : formatAmount(totalAmount)}
                 </p>
               </div>
@@ -373,7 +403,7 @@ function Reports() {
                     : 'Paid Payments'}
                 </p>
 
-                <p className="mt-3 text-2xl font-bold text-emerald-300">
+                <p className="mt-3 text-2xl font-bold text-cyan-300">
                   {loading ? '...' : totalPayments}
                 </p>
               </div>
@@ -385,7 +415,7 @@ function Reports() {
               <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl">
                 <p className="text-sm text-white/50">Active Students</p>
 
-                <p className="mt-3 text-3xl font-bold text-emerald-300">
+                <p className="mt-3 text-3xl font-bold text-cyan-300">
                   {loading ? '...' : summary?.activeStudents ?? 0}
                 </p>
               </div>
@@ -393,7 +423,7 @@ function Reports() {
               <div className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-xl">
                 <p className="text-sm text-white/50">Inactive Students</p>
 
-                <p className="mt-3 text-3xl font-bold text-emerald-300">
+                <p className="mt-3 text-3xl font-bold text-cyan-300">
                   {loading ? '...' : summary?.inactiveStudents ?? 0}
                 </p>
               </div>
@@ -420,12 +450,12 @@ function Reports() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search report..."
-                className="min-w-0 rounded-xl border border-white/10 bg-[#0b2018] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-emerald-300/40"
+                className="min-w-0 rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
               />
 
               <button
                 type="button"
-                onClick={() => loadReport(activeTab)}
+                onClick={handleRefresh}
                 disabled={loading}
                 className="rounded-xl border border-white/10 px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 disabled:opacity-50"
               >

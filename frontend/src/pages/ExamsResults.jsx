@@ -20,10 +20,10 @@ const initialResultForm = {
 }
 
 const inputStyle =
-  'w-full rounded-xl border border-[#293C33] bg-[#071711] px-4 py-3 text-sm text-white outline-none transition focus:border-[#00D5A0]'
+  'w-full rounded-xl border border-[#34345b] bg-[#0b1026] px-4 py-3 text-sm text-white outline-none transition focus:border-[#67e8f9]'
 
 const buttonStyle =
-  'rounded-xl bg-[#00D5A0] px-5 py-3 text-sm font-semibold text-[#061B13] transition hover:bg-[#55E6B8] disabled:cursor-not-allowed disabled:opacity-50'
+  'rounded-xl bg-[#67e8f9] px-5 py-3 text-sm font-semibold text-[#0b1026] transition hover:bg-[#a5f3fc] disabled:cursor-not-allowed disabled:opacity-50'
 
 function ExamsResults() {
   const [exams, setExams] = useState([])
@@ -322,16 +322,16 @@ function ExamsResults() {
   })
 
   const cardStyle =
-    'rounded-2xl border border-[#293C33] bg-[#122820]/90 p-5 shadow-lg shadow-black/10'
+    'rounded-2xl border border-[#34345b] bg-[#171a3c]/90 p-5 shadow-lg shadow-black/10'
 
   const labelStyle = 'mb-2 block text-sm font-medium text-[#C5D1CB]'
 
   const secondaryButton =
-    'rounded-xl border border-[#293C33] px-4 py-2 text-sm font-medium text-[#C5D1CB] transition hover:border-[#55E6B8] hover:text-[#55E6B8]'
+    'rounded-xl border border-[#34345b] px-4 py-2 text-sm font-medium text-[#C5D1CB] transition hover:border-[#a5f3fc] hover:text-[#a5f3fc]'
 
   function statusStyle(status) {
     if (status === 'completed') {
-      return 'bg-[#00D5A0]/15 text-[#55E6B8]'
+      return 'bg-[#67e8f9]/15 text-[#a5f3fc]'
     }
 
     if (status === 'cancelled') {
@@ -342,7 +342,7 @@ function ExamsResults() {
   }
 
   return (
-    <div className="min-h-screen bg-[#061B13] px-4 py-6 text-[#F8FAF9] sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-6 text-[#F8FAF9] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
 
         {/* Header */}
@@ -350,7 +350,7 @@ function ExamsResults() {
           <div>
             <Link
               to="/admin/dashboard"
-              className="text-sm text-emerald-300 transition hover:text-emerald-200"
+              className="text-sm text-cyan-300 transition hover:text-cyan-200"
             >
               ← Back to Dashboard
             </Link>
@@ -364,9 +364,9 @@ function ExamsResults() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#293C33] bg-[#122820] px-5 py-4">
+          <div className="rounded-2xl border border-[#34345b] bg-[#171a3c] px-5 py-4">
             <p className="text-sm text-[#89958F]">Total Exams</p>
-            <p className="mt-1 text-3xl font-bold text-[#55E6B8]">
+            <p className="mt-1 text-3xl font-bold text-[#a5f3fc]">
               {exams.length}
             </p>
           </div>
@@ -380,7 +380,7 @@ function ExamsResults() {
         )}
 
         {success && (
-          <div className="mb-5 rounded-xl border border-[#00D5A0]/30 bg-[#00D5A0]/10 px-4 py-3 text-sm text-[#55E6B8]">
+          <div className="mb-5 rounded-xl border border-[#67e8f9]/30 bg-[#67e8f9]/10 px-4 py-3 text-sm text-[#a5f3fc]">
             {success}
           </div>
         )}
@@ -389,21 +389,21 @@ function ExamsResults() {
         <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div className={cardStyle}>
             <p className="text-sm text-[#89958F]">Total Exams</p>
-            <p className="mt-3 text-3xl font-bold text-[#55E6B8]">
+            <p className="mt-3 text-3xl font-bold text-[#a5f3fc]">
               {exams.length}
             </p>
           </div>
 
           <div className={cardStyle}>
             <p className="text-sm text-[#89958F]">Upcoming Exams</p>
-            <p className="mt-3 text-3xl font-bold text-[#55E6B8]">
+            <p className="mt-3 text-3xl font-bold text-[#a5f3fc]">
               {exams.filter((exam) => exam.status === 'upcoming').length}
             </p>
           </div>
 
           <div className={cardStyle}>
             <p className="text-sm text-[#89958F]">Results Recorded</p>
-            <p className="mt-3 text-3xl font-bold text-[#55E6B8]">
+            <p className="mt-3 text-3xl font-bold text-[#a5f3fc]">
               {results.length}
             </p>
           </div>
@@ -558,7 +558,7 @@ function ExamsResults() {
                       {filteredExams.map((exam) => (
                         <div
                           key={exam._id}
-                          className="rounded-xl border border-[#293C33] bg-[#071711]/60 p-4"
+                          className="rounded-xl border border-[#34345b] bg-[#0b1026]/60 p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
@@ -765,7 +765,7 @@ function ExamsResults() {
                       {filteredResults.map((result) => (
                         <div
                           key={result._id}
-                          className="rounded-xl border border-[#293C33] bg-[#071711]/60 p-4"
+                          className="rounded-xl border border-[#34345b] bg-[#0b1026]/60 p-4"
                         >
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
@@ -779,7 +779,7 @@ function ExamsResults() {
                             </div>
 
                             <div className="text-right">
-                              <p className="font-bold text-[#55E6B8]">
+                              <p className="font-bold text-[#a5f3fc]">
                                 {result.marks} / {result.totalMarks}
                               </p>
 

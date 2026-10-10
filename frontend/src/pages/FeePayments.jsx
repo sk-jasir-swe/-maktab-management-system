@@ -15,10 +15,10 @@ const initialForm = {
 }
 
 const inputClass =
-  'w-full rounded-xl border border-emerald-100/15 bg-[#10271f] px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-emerald-400/60 focus:ring-2 focus:ring-emerald-400/10'
+  'w-full rounded-xl border border-cyan-100/15 bg-[#111935] px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/10'
 
 const glassPanel =
-  'rounded-3xl border border-white/[0.10] bg-[#122820]/75 shadow-xl shadow-black/10 backdrop-blur-xl'
+  'rounded-3xl border border-white/[0.10] bg-[#171a3c]/75 shadow-xl shadow-black/10 backdrop-blur-xl'
 
 function FeePayments() {
   const navigate = useNavigate()
@@ -270,10 +270,10 @@ function FeePayments() {
 
   return (
     <div
-      className="fee-payments-page min-h-screen px-4 py-6 text-white sm:px-8 sm:py-8"
+      className="fee-payments-page min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-6 text-white sm:px-8 sm:py-8"
       style={{
         background:
-          'radial-gradient(ellipse at 10% 0%, rgba(0,213,160,0.08), transparent 35%), linear-gradient(135deg, #061b13 0%, #081e16 55%, #071910 100%)',
+          'radial-gradient(ellipse at 10% 0%, rgba(0,213,160,0.08), transparent 35%), linear-gradient(135deg, #0b1026 0%, #081e16 55%, #071910 100%)',
         minHeight: '100vh',
         width: '100%',
         position: 'relative',
@@ -285,7 +285,7 @@ function FeePayments() {
         <button
           type="button"
           onClick={() => navigate('/admin/dashboard')}
-          className="mb-7 inline-flex items-center gap-2 text-sm text-gray-300 transition hover:text-emerald-300"
+          className="mb-7 inline-flex items-center gap-2 text-sm text-gray-300 transition hover:text-cyan-300"
         >
           <span aria-hidden="true">←</span>
           Back to Dashboard
@@ -294,7 +294,7 @@ function FeePayments() {
         {/* Page Header */}
         <header className="mb-8 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-emerald-300">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-cyan-300">
               Finance Management
             </p>
 
@@ -310,7 +310,7 @@ function FeePayments() {
           <button
             type="button"
             onClick={openAddForm}
-            className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg shadow-emerald-950/30 transition hover:bg-[#38e6b7]"
+            className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg shadow-cyan-950/30 transition hover:bg-[#38e6b7]"
           >
             + Record Fee Payment
           </button>
@@ -324,7 +324,7 @@ function FeePayments() {
         )}
 
         {success && (
-          <div className="mb-5 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200">
+          <div className="mb-5 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-200">
             {success}
           </div>
         )}
@@ -588,10 +588,10 @@ function FeePayments() {
             {/* Date Range Filter */}
             <form
               onSubmit={applyDateFilter}
-              className="rounded-2xl border border-emerald-300/10 bg-[#0b2118]/70 p-4"
+              className="rounded-2xl border border-cyan-300/10 bg-[#0b2118]/70 p-4"
             >
               <div className="mb-3">
-                <h3 className="text-sm font-semibold text-emerald-200">
+                <h3 className="text-sm font-semibold text-cyan-200">
                   Filter by Payment Date
                 </h3>
 
@@ -637,7 +637,7 @@ function FeePayments() {
               </div>
 
               {(appliedFromDate || appliedToDate) && (
-                <p className="mt-3 text-xs text-emerald-300">
+                <p className="mt-3 text-xs text-cyan-300">
                   Applied range:{' '}
                   {appliedFromDate ? formatDate(appliedFromDate) : 'Any date'}{' '}
                   – {appliedToDate ? formatDate(appliedToDate) : 'Any date'}
@@ -682,7 +682,7 @@ function FeePayments() {
                   {filteredPayments.map((payment) => (
                     <tr
                       key={payment._id}
-                      className="transition duration-200 hover:bg-emerald-400/4.5"
+                      className="transition duration-200 hover:bg-cyan-400/4.5"
                     >
                       <td className="px-5 py-4">
                         <p className="font-semibold text-gray-100">
@@ -730,7 +730,7 @@ function FeePayments() {
                         <button
                           type="button"
                           onClick={() => openEditForm(payment)}
-                          className="rounded-lg border border-emerald-400/25 px-3 py-2 text-xs font-semibold text-emerald-300 transition hover:bg-emerald-400/10"
+                          className="rounded-lg border border-cyan-400/25 px-3 py-2 text-xs font-semibold text-cyan-300 transition hover:bg-cyan-400/10"
                         >
                           Edit
                         </button>
@@ -765,13 +765,13 @@ function FormField({ label, children }) {
 
 function StatCard({ title, value, icon }) {
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#122820]/75 p-5 shadow-xl shadow-black/10 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-emerald-300/25 hover:bg-[#162f25]">
-      <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-emerald-400/[0.07] blur-3xl transition group-hover:bg-emerald-300/13" />
+    <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#171a3c]/75 p-5 shadow-xl shadow-black/10 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-300/25 hover:bg-[#1b2048]">
+      <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-400/[0.07] blur-3xl transition group-hover:bg-cyan-300/13" />
 
       <div className="relative mb-5 flex items-center justify-between">
         <p className="text-sm text-gray-400">{title}</p>
 
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-emerald-300/10 bg-emerald-400/8 text-xl">
+        <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-cyan-300/10 bg-cyan-400/8 text-xl">
           {icon}
         </span>
       </div>
@@ -785,7 +785,7 @@ function StatCard({ title, value, icon }) {
 
 function StatusBadge({ status }) {
   const styles = {
-    paid: 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300',
+    paid: 'border-cyan-400/20 bg-cyan-400/10 text-cyan-300',
     pending: 'border-amber-300/20 bg-amber-400/10 text-amber-300',
     cancelled: 'border-red-400/20 bg-red-400/10 text-red-300',
   }

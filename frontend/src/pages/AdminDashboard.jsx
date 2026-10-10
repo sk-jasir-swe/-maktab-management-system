@@ -144,11 +144,11 @@ function AdminDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#071711] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
+        <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10">
@@ -156,7 +156,7 @@ function AdminDashboard() {
         <header className="border-b border-white/10 bg-white/3 backdrop-blur-xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-2xl text-emerald-300">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-2xl text-cyan-300">
                 ☪
               </div>
 
@@ -186,7 +186,7 @@ function AdminDashboard() {
         <main className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
           {/* Welcome */}
           <section className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
               Admin Overview
             </p>
 
@@ -227,7 +227,7 @@ function AdminDashboard() {
               {stats.map((stat) => (
                 <div
                   key={stat.title}
-                  className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-emerald-300/20"
+                  className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan-300/20"
                 >
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-white/55">
@@ -239,7 +239,7 @@ function AdminDashboard() {
                     </span>
                   </div>
 
-                  <p className="mt-5 text-3xl font-bold text-emerald-300">
+                  <p className="mt-5 text-3xl font-bold text-cyan-300">
                     {stat.value}
                   </p>
                 </div>
@@ -264,9 +264,9 @@ function AdminDashboard() {
                 <Link
                   key={item.title}
                   to={item.path}
-                  className="group rounded-2xl border border-white/10 bg-white/4 p-6 backdrop-blur-xl transition hover:-translate-y-1 hover:border-emerald-300/30 hover:bg-emerald-300/6"
+                  className="group rounded-2xl border border-white/10 bg-white/4 p-6 backdrop-blur-xl transition hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-cyan-300/6"
                 >
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-2xl transition group-hover:border-emerald-300/20 group-hover:bg-emerald-300/10">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-2xl transition group-hover:border-cyan-300/20 group-hover:bg-cyan-300/10">
                     {item.icon}
                   </div>
 
@@ -278,7 +278,7 @@ function AdminDashboard() {
                     {item.description}
                   </p>
 
-                  <p className="mt-5 text-sm font-medium text-emerald-300">
+                  <p className="mt-5 text-sm font-medium text-cyan-300">
                     Open module →
                   </p>
                 </Link>

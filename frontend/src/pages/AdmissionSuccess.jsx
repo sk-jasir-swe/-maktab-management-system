@@ -3,16 +3,16 @@ import '../App.css'
 
 function AdmissionSuccess() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#071711] px-4 py-10 text-white">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-10 text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-emerald-500/15 blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-teal-400/10 blur-[120px]" />
+        <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
+        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
       </div>
 
       <div className="relative z-10 w-full max-w-lg rounded-3xl border border-white/10 bg-white/5 p-8 text-center shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-12">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-400/10">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-400/10">
           <svg
-            className="h-12 w-12 text-emerald-300"
+            className="h-12 w-12 text-cyan-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -26,7 +26,7 @@ function AdmissionSuccess() {
           </svg>
         </div>
 
-        <p className="mt-8 text-sm font-semibold uppercase tracking-[0.25em] text-emerald-300">
+        <p className="mt-8 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
           Application Submitted
         </p>
 
@@ -56,7 +56,7 @@ function AdmissionSuccess() {
         <div className="mt-8 flex flex-col gap-3">
           <Link
             to="/"
-            className="rounded-xl bg-emerald-400 px-6 py-3.5 font-semibold text-[#071711] transition hover:bg-emerald-300"
+            className="rounded-xl bg-cyan-400 px-6 py-3.5 font-semibold text-[#0b1026] transition hover:bg-cyan-300"
           >
             Back to Home →
           </Link>

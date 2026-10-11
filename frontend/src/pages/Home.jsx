@@ -65,29 +65,31 @@ function Home() {
       }
     }
 
-    async function fetchTeachers() {
-      try {
-        const response = await apiRequest('/teachers')
+   async function fetchTeachers() {
+  try {
+    const response = await apiRequest('/teachers')
 
-        if (active) {
-          setTeachers(
-            Array.isArray(response?.teachers)
-              ? response.teachers
-              : [],
+    if (active) {
+      const activeTeachers = Array.isArray(response?.teachers)
+        ? response.teachers.filter(
+            (teacher) => teacher.status === 'active'
           )
-        }
-      } catch (error) {
-        console.error('Failed to fetch teachers:', error)
+        : []
 
-        if (active) {
-          setTeachersError(true)
-        }
-      } finally {
-        if (active) {
-          setTeachersLoading(false)
-        }
-      }
+      setTeachers(activeTeachers)
     }
+  } catch (error) {
+    console.error('Failed to fetch teachers:', error)
+
+    if (active) {
+      setTeachersError(true)
+    }
+  } finally {
+    if (active) {
+      setTeachersLoading(false)
+    }
+  }
+}
 
     fetchNotices()
     fetchTeachers()

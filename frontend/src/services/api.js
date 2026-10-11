@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL
+const API_URL = import.meta.env.PROD
+  ? '/api'
+  : (import.meta.env.VITE_API_URL || '/api')
 
 async function parseResponse(response) {
   const data = await response.json().catch(() => ({}))

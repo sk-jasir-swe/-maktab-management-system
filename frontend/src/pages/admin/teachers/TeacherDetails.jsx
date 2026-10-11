@@ -1,7 +1,21 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { apiRequest } from '../api'
-import '../App.css'
+import { apiRequest } from '../../../services/api'
+import '../../../App.css'
+
+function DetailItem({ label, value }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+      <p className="text-xs font-medium uppercase tracking-wider text-white/40">
+        {label}
+      </p>
+
+      <p className="mt-2 break-words text-sm font-medium text-white/90">
+        {value || 'Not provided'}
+      </p>
+    </div>
+  )
+}
 
 function TeacherDetails() {
   const [teachers, setTeachers] = useState([])
@@ -59,20 +73,6 @@ function TeacherDetails() {
       month: 'long',
       year: 'numeric',
     })
-  }
-
-  function DetailItem({ label, value }) {
-    return (
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-white/40">
-          {label}
-        </p>
-
-        <p className="mt-2 break-words text-sm font-medium text-white/90">
-          {value || 'Not provided'}
-        </p>
-      </div>
-    )
   }
 
   return (

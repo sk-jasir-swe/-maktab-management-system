@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { apiRequest } from '../api'
+import { apiRequest } from '../services/api'
 
 function AdmissionStatus() {
   const [formData, setFormData] = useState({

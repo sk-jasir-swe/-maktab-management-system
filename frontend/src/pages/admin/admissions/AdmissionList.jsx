@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { apiRequest } from '../api'
-import '../App.css'
+import { apiRequest } from '../../../services/api'
+import '../../../App.css'
 
 function Admissions() {
   const [admissions, setAdmissions] = useState([])

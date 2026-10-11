@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { apiRequest } from '../api'
+import { apiRequest } from '../../../services/api'
 
 const reports = [
   { id: 'fees', label: 'Fee Collection', endpoint: '/reports/fees' },

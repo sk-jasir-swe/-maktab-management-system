@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { apiRequest } from '../api'
-import { resetAdminVerification } from '../App'
-import '../App.css'
+import { apiRequest } from '../../services/api'
+import { resetAdminVerification } from '../../services/adminAuth'
+import '../../App.css'
 
 function AdminDashboard() {
   const navigate = useNavigate()

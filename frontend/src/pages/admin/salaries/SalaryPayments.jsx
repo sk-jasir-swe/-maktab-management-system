@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { apiRequest } from '../api'
+import { apiRequest } from '../../../services/api'
 
 const initialForm = {
   teacher: '',

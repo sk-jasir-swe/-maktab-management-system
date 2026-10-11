@@ -1,24 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { apiRequest } from '../api'
-import '../App.css'
+import { apiRequest } from '../../../services/api'
+import '../../../App.css'
 
 const initialForm = {
   name: '',
-  fatherName: '',
-  motherName: '',
-  dateOfBirth: '',
-  gender: 'male',
   phone: '',
   whatsappNumber: '',
+  email: '',
+  subject: '',
   address: '',
-  admissionDate: new Date().toISOString().split('T')[0],
-  classTime: 'morning',
+  joiningDate: new Date().toISOString().split('T')[0],
   status: 'active',
 }
 
-function Students() {
-  const [students, setStudents] = useState([])
+function Teachers() {
+  const [teachers, setTeachers] = useState([])
   const [formData, setFormData] = useState(initialForm)
   const [photo, setPhoto] = useState(null)
   const [search, setSearch] = useState('')
@@ -31,18 +28,18 @@ function Students() {
   const [success, setSuccess] = useState('')
 
   useEffect(() => {
-    fetchStudents()
+    fetchTeachers()
   }, [])
 
-  async function fetchStudents() {
+  async function fetchTeachers() {
     try {
       setLoading(true)
       setError('')
 
-      const response = await apiRequest('/students')
-      setStudents(response.students || [])
+      const response = await apiRequest('/teachers')
+      setTeachers(response.teachers || [])
     } catch (err) {
-      setError(err.message || 'Unable to load students.')
+      setError(err.message || 'Unable to load teachers.')
     } finally {
       setLoading(false)
     }
@@ -60,7 +57,7 @@ function Students() {
   function openAddForm() {
     setFormData({
       ...initialForm,
-      admissionDate: new Date().toISOString().split('T')[0],
+      joiningDate: new Date().toISOString().split('T')[0],
     })
 
     setPhoto(null)
@@ -70,27 +67,22 @@ function Students() {
     setShowForm(true)
   }
 
-  function openEditForm(student) {
+  function openEditForm(teacher) {
     setFormData({
-      name: student.name || '',
-      fatherName: student.fatherName || '',
-      motherName: student.motherName || '',
-      dateOfBirth: student.dateOfBirth
-        ? new Date(student.dateOfBirth).toISOString().split('T')[0]
+      name: teacher.name || '',
+      phone: teacher.phone || '',
+      whatsappNumber: teacher.whatsappNumber || '',
+      email: teacher.email || '',
+      subject: teacher.subject || '',
+      address: teacher.address || '',
+      joiningDate: teacher.joiningDate
+        ? new Date(teacher.joiningDate).toISOString().split('T')[0]
         : '',
-      gender: student.gender || 'male',
-      phone: student.phone || '',
-      whatsappNumber: student.whatsappNumber || '',
-      address: student.address || '',
-      admissionDate: student.admissionDate
-        ? new Date(student.admissionDate).toISOString().split('T')[0]
-        : '',
-      classTime: student.classTime || 'morning',
-      status: student.status || 'active',
+      status: teacher.status || 'active',
     })
 
     setPhoto(null)
-    setEditingId(student._id)
+    setEditingId(teacher._id)
     setError('')
     setSuccess('')
     setShowForm(true)
@@ -113,6 +105,24 @@ function Students() {
 
     if (saving) return
 
+    const phone = formData.phone.trim()
+    const whatsappNumber = formData.whatsappNumber.trim()
+
+    if (!/^\d{10}$/.test(phone)) {
+      setError('Phone number must contain exactly 10 digits.')
+      return
+    }
+
+    if (!/^\d{10}$/.test(whatsappNumber)) {
+      setError('WhatsApp number must contain exactly 10 digits.')
+      return
+    }
+
+    if (photo && photo.size > 5 * 1024 * 1024) {
+      setError('Photo size must not exceed 5 MB.')
+      return
+    }
+
     try {
       setSaving(true)
       setError('')
@@ -120,7 +130,11 @@ function Students() {
 
       const body = new FormData()
 
-      Object.entries(formData).forEach(([key, value]) => {
+      Object.entries({
+        ...formData,
+        phone,
+        whatsappNumber,
+      }).forEach(([key, value]) => {
         body.append(key, value)
       })
 
@@ -129,8 +143,8 @@ function Students() {
       }
 
       const endpoint = editingId
-        ? `/students/${editingId}`
-        : '/students'
+        ? `/teachers/${editingId}`
+        : '/teachers'
 
       await apiRequest(endpoint, {
         method: editingId ? 'PUT' : 'POST',
@@ -139,25 +153,25 @@ function Students() {
 
       setSuccess(
         editingId
-          ? 'Student updated successfully.'
-          : 'Student added successfully.',
+          ? 'Teacher updated successfully.'
+          : 'Teacher added successfully.',
       )
 
       setShowForm(false)
       setEditingId(null)
       setPhoto(null)
 
-      await fetchStudents()
+      await fetchTeachers()
     } catch (err) {
-      setError(err.message || 'Unable to save student.')
+      setError(err.message || 'Unable to save teacher.')
     } finally {
       setSaving(false)
     }
   }
 
-  async function handleDelete(student) {
+  async function handleDelete(teacher) {
     const confirmed = window.confirm(
-      `Are you sure you want to delete ${student.name}?`,
+      `Are you sure you want to delete ${teacher.name}?`,
     )
 
     if (!confirmed) return
@@ -166,62 +180,53 @@ function Students() {
       setError('')
       setSuccess('')
 
-      await apiRequest(`/students/${student._id}`, {
+      await apiRequest(`/teachers/${teacher._id}`, {
         method: 'DELETE',
       })
 
-      setStudents((previous) =>
-        previous.filter((item) => item._id !== student._id),
+      setTeachers((previous) =>
+        previous.filter((item) => item._id !== teacher._id),
       )
 
-      setSuccess('Student deleted successfully.')
+      setSuccess('Teacher deleted successfully.')
     } catch (err) {
-      setError(err.message || 'Unable to delete student.')
+      setError(err.message || 'Unable to delete teacher.')
     }
   }
 
-  const filteredStudents = students.filter((student) => {
+  const filteredTeachers = teachers.filter((teacher) => {
     const searchText = search.trim().toLowerCase()
 
     const matchesSearch = [
-      student.name,
-      student.fatherName,
-      student.phone,
+      teacher.name,
+      teacher.phone,
+      teacher.whatsappNumber,
+      teacher.email,
+      teacher.subject,
     ].some((value) =>
       String(value || '').toLowerCase().includes(searchText),
     )
 
     const matchesStatus =
-      filterStatus === 'all' || student.status === filterStatus
+      filterStatus === 'all' || teacher.status === filterStatus
 
     return matchesSearch && matchesStatus
   })
 
-  const activeCount = students.filter(
-    (student) => student.status === 'active',
+  const activeCount = teachers.filter(
+    (teacher) => teacher.status === 'active',
   ).length
 
-  const inactiveCount = students.filter(
-    (student) => student.status === 'inactive',
+  const inactiveCount = teachers.filter(
+    (teacher) => teacher.status === 'inactive',
   ).length
 
   const inputClass =
     'mt-2 w-full rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
 
-  function formatClassTime(classTime) {
-    if (classTime === 'after_asr') return 'After Asr'
-    if (classTime === 'after_maghrib') return 'After Maghrib'
-    if (classTime === 'morning') return 'Morning'
-    return classTime || '—'
-  }
-
-  function formatDate(date) {
-    return date ? new Date(date).toLocaleDateString() : '—'
-  }
-
   return (
     <div className="relative min-h-screen overflow-hidden bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">
-      {/* Background glow */}
+      {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
         <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />
@@ -243,11 +248,11 @@ function Students() {
             </p>
 
             <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
-              Students Management
+              Teachers Management
             </h1>
 
             <p className="mt-3 text-sm leading-6 text-white/50">
-              Add, search, update and manage student records.
+              Manage teacher profiles, contact details and status.
             </p>
           </div>
 
@@ -256,7 +261,7 @@ function Students() {
             onClick={openAddForm}
             className="rounded-xl bg-cyan-400 px-5 py-3 font-semibold text-[#0b1026] transition hover:bg-cyan-300"
           >
-            + Add Student
+            + Add Teacher
           </button>
         </header>
 
@@ -283,17 +288,17 @@ function Students() {
         <section className="mb-8 grid gap-4 sm:grid-cols-3">
           {[
             {
-              label: 'Total Students',
-              value: students.length,
-              icon: '🎓',
+              label: 'Total Teachers',
+              value: teachers.length,
+              icon: '👨‍🏫',
             },
             {
-              label: 'Active Students',
+              label: 'Active Teachers',
               value: activeCount,
               icon: '✅',
             },
             {
-              label: 'Inactive Students',
+              label: 'Inactive Teachers',
               value: inactiveCount,
               icon: '⏸️',
             },
@@ -320,11 +325,11 @@ function Students() {
             <div className="mb-7 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">
-                  {editingId ? 'Edit Student' : 'Add New Student'}
+                  {editingId ? 'Edit Teacher' : 'Add New Teacher'}
                 </h2>
 
                 <p className="mt-2 text-sm text-white/45">
-                  Enter the student details below.
+                  Enter the teacher details below.
                 </p>
               </div>
 
@@ -339,9 +344,10 @@ function Students() {
 
             <form onSubmit={handleSubmit}>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Name */}
                 <div>
                   <label htmlFor="name" className="text-sm text-white/75">
-                    Student Name *
+                    Teacher Name *
                   </label>
 
                   <input
@@ -350,84 +356,12 @@ function Students() {
                     value={formData.name}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="Enter student name"
+                    placeholder="Enter teacher name"
                     required
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="fatherName"
-                    className="text-sm text-white/75"
-                  >
-                    Father Name
-                  </label>
-
-                  <input
-                    id="fatherName"
-                    name="fatherName"
-                    value={formData.fatherName}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter father name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="motherName"
-                    className="text-sm text-white/75"
-                  >
-                    Mother Name
-                  </label>
-
-                  <input
-                    id="motherName"
-                    name="motherName"
-                    value={formData.motherName}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter mother name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="dateOfBirth"
-                    className="text-sm text-white/75"
-                  >
-                    Date of Birth
-                  </label>
-
-                  <input
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="gender" className="text-sm text-white/75">
-                    Gender *
-                  </label>
-
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className={inputClass}
-                    required
-                  >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
+                {/* Phone */}
                 <div>
                   <label htmlFor="phone" className="text-sm text-white/75">
                     Phone Number *
@@ -437,16 +371,18 @@ function Students() {
                     id="phone"
                     name="phone"
                     type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
                     value={formData.phone}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="Enter phone number"
-                    pattern="[0-9]{10}"
-                    maxLength={10}
+                    placeholder="10-digit phone number"
                     required
                   />
                 </div>
 
+                {/* WhatsApp */}
                 <div>
                   <label
                     htmlFor="whatsappNumber"
@@ -459,57 +395,71 @@ function Students() {
                     id="whatsappNumber"
                     name="whatsappNumber"
                     type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{10}"
+                    maxLength={10}
                     value={formData.whatsappNumber}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="Enter WhatsApp number"
-                    pattern="[0-9]{10}"
-                    maxLength={10}
+                    placeholder="10-digit WhatsApp number"
                     required
                   />
                 </div>
 
+                {/* Email */}
                 <div>
-                  <label
-                    htmlFor="admissionDate"
-                    className="text-sm text-white/75"
-                  >
-                    Admission Date *
+                  <label htmlFor="email" className="text-sm text-white/75">
+                    Email Address
                   </label>
 
                   <input
-                    id="admissionDate"
-                    name="admissionDate"
-                    type="date"
-                    value={formData.admissionDate}
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
                     onChange={handleChange}
                     className={inputClass}
+                    placeholder="teacher@example.com"
+                  />
+                </div>
+
+                {/* Subject */}
+                <div>
+                  <label htmlFor="subject" className="text-sm text-white/75">
+                    Subject *
+                  </label>
+
+                  <input
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="e.g. Quran, Arabic"
                     required
                   />
                 </div>
 
+                {/* Joining Date */}
                 <div>
                   <label
-                    htmlFor="classTime"
+                    htmlFor="joiningDate"
                     className="text-sm text-white/75"
                   >
-                    Class Time *
+                    Joining Date
                   </label>
 
-                  <select
-                    id="classTime"
-                    name="classTime"
-                    value={formData.classTime}
+                  <input
+                    id="joiningDate"
+                    name="joiningDate"
+                    type="date"
+                    value={formData.joiningDate}
                     onChange={handleChange}
                     className={inputClass}
-                    required
-                  >
-                    <option value="morning">Morning</option>
-                    <option value="after_asr">After Asr</option>
-                    <option value="after_maghrib">After Maghrib</option>
-                  </select>
+                  />
                 </div>
 
+                {/* Status */}
                 <div>
                   <label htmlFor="status" className="text-sm text-white/75">
                     Status *
@@ -528,11 +478,9 @@ function Students() {
                   </select>
                 </div>
 
+                {/* Address */}
                 <div className="sm:col-span-2 lg:col-span-3">
-                  <label
-                    htmlFor="address"
-                    className="text-sm text-white/75"
-                  >
+                  <label htmlFor="address" className="text-sm text-white/75">
                     Address
                   </label>
 
@@ -547,9 +495,10 @@ function Students() {
                   />
                 </div>
 
+                {/* Photo */}
                 <div className="sm:col-span-2 lg:col-span-3">
                   <label htmlFor="photo" className="text-sm text-white/75">
-                    Student Photo (Optional)
+                    Teacher Photo (Optional)
                   </label>
 
                   <input
@@ -574,6 +523,7 @@ function Students() {
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="submit"
@@ -583,8 +533,8 @@ function Students() {
                   {saving
                     ? 'Saving...'
                     : editingId
-                      ? 'Update Student'
-                      : 'Save Student'}
+                      ? 'Update Teacher'
+                      : 'Save Teacher'}
                 </button>
 
                 <button
@@ -606,8 +556,8 @@ function Students() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by student name, father name or phone..."
-            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
+            placeholder="Search name, phone, WhatsApp, email or subject..."
+            className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
           />
 
           <select
@@ -615,123 +565,121 @@ function Students() {
             onChange={(event) => setFilterStatus(event.target.value)}
             className="rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none focus:border-cyan-300/40"
           >
-            <option value="all">All Students</option>
-            <option value="active">Active Students</option>
-            <option value="inactive">Inactive Students</option>
+            <option value="all">All Teachers</option>
+            <option value="active">Active Teachers</option>
+            <option value="inactive">Inactive Teachers</option>
           </select>
 
           <button
             type="button"
-            onClick={fetchStudents}
+            onClick={fetchTeachers}
             className="rounded-xl border border-white/10 px-5 py-3 text-sm text-white/70 transition hover:bg-white/10"
           >
             ↻ Refresh
           </button>
         </section>
 
-        {/* Students List */}
-        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/4 backdrop-blur-xl">
+        {/* Teachers Table */}
+        <section className="overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-6 py-5">
-            <h2 className="text-lg font-semibold">All Students</h2>
+            <h2 className="text-lg font-semibold">All Teachers</h2>
 
             <span className="text-sm text-white/45">
-              {filteredStudents.length} student(s)
+              {filteredTeachers.length} teacher(s)
             </span>
           </div>
 
           {loading ? (
             <div className="p-10 text-center text-white/50">
-              Loading students...
+              Loading teachers...
             </div>
-          ) : filteredStudents.length === 0 ? (
+          ) : filteredTeachers.length === 0 ? (
             <div className="p-10 text-center">
-              <div className="text-4xl">🎓</div>
+              <div className="text-4xl">👨‍🏫</div>
 
               <h3 className="mt-4 text-lg font-semibold">
-                No students found
+                No teachers found
               </h3>
 
               <p className="mt-2 text-sm text-white/45">
-                Try another search or add a new student.
+                Try another search or add a new teacher.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-212.5 text-left text-sm">
-                <thead className="bg-white/3 text-xs uppercase tracking-wider text-white/45">
+              <table className="w-full min-w-225 text-left text-sm">
+                <thead className="bg-white/5 text-xs uppercase tracking-wider text-white/45">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Student</th>
-                    <th className="px-6 py-4 font-medium">Father Name</th>
+                    <th className="px-6 py-4 font-medium">Teacher</th>
+                    <th className="px-6 py-4 font-medium">Subject</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
                     <th className="px-6 py-4 font-medium">WhatsApp</th>
-                    <th className="px-6 py-4 font-medium">Class Time</th>
-                    <th className="px-6 py-4 font-medium">Admission Date</th>
+                    <th className="px-6 py-4 font-medium">Joining Date</th>
                     <th className="px-6 py-4 font-medium">Status</th>
                     <th className="px-6 py-4 font-medium">Actions</th>
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-white/6">
-                  {filteredStudents.map((student) => (
+                <tbody className="divide-y divide-white/5">
+                  {filteredTeachers.map((teacher) => (
                     <tr
-                      key={student._id}
-                      className="transition hover:bg-white/2.5"
+                      key={teacher._id}
+                      className="transition hover:bg-white/5"
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {student.photo?.url ? (
+                          {teacher.photo?.url ? (
                             <img
-                              src={student.photo.url}
-                              alt={student.name}
+                              src={teacher.photo.url}
+                              alt={teacher.name}
                               className="h-11 w-11 rounded-xl border border-white/10 object-cover"
                             />
                           ) : (
                             <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-cyan-400/10 text-lg text-cyan-300">
-                              {student.name?.charAt(0)?.toUpperCase() || '?'}
+                              {teacher.name?.charAt(0)?.toUpperCase() || '?'}
                             </div>
                           )}
 
                           <div>
                             <p className="font-medium text-white">
-                              {student.name}
+                              {teacher.name}
                             </p>
-
                             <p className="mt-1 text-xs text-white/40">
-                              {student.gender || '—'}
+                              {teacher.email || 'No email'}
                             </p>
                           </div>
                         </div>
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.fatherName || '—'}
+                        {teacher.subject || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.phone || '—'}
+                        {teacher.phone || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.whatsappNumber || '—'}
+                        {teacher.whatsappNumber || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {formatClassTime(student.classTime)}
-                      </td>
-
-                      <td className="px-6 py-4 text-white/65">
-                        {formatDate(student.admissionDate)}
+                        {teacher.joiningDate
+                          ? new Date(
+                              teacher.joiningDate,
+                            ).toLocaleDateString()
+                          : '—'}
                       </td>
 
                       <td className="px-6 py-4">
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-medium ${
-                            student.status === 'active'
+                            teacher.status === 'active'
                               ? 'bg-cyan-400/10 text-cyan-300'
                               : 'bg-amber-400/10 text-amber-300'
                           }`}
                         >
-                          {student.status || 'unknown'}
+                          {teacher.status || 'unknown'}
                         </span>
                       </td>
 
@@ -739,7 +687,7 @@ function Students() {
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            onClick={() => openEditForm(student)}
+                            onClick={() => openEditForm(teacher)}
                             className="rounded-lg border border-cyan-300/20 px-3 py-2 text-xs font-medium text-cyan-300 transition hover:bg-cyan-300/10"
                           >
                             Edit
@@ -747,7 +695,7 @@ function Students() {
 
                           <button
                             type="button"
-                            onClick={() => handleDelete(student)}
+                            onClick={() => handleDelete(teacher)}
                             className="rounded-lg border border-red-400/20 px-3 py-2 text-xs font-medium text-red-300 transition hover:bg-red-400/10"
                           >
                             Delete
@@ -770,4 +718,4 @@ function Students() {
   )
 }
 
-export default Students
+export default Teachers

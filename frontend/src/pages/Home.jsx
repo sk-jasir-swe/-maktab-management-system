@@ -241,7 +241,7 @@ function Home() {
         {/* Hero Section */}
         <section className="mx-auto grid min-h-[78vh] max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2">
           <div>
-            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-sm text-cyan-200">
+            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 text-sm text-cyan-200">
               <span className="h-2 w-2 rounded-full bg-violet-400" />
 
               A place to learn and grow
@@ -735,7 +735,7 @@ function Home() {
 
         {/* Admission Section */}
         <section id="admission" className="mx-auto max-w-7xl px-6 py-12">
-          <div className="relative overflow-hidden rounded-3xl border border-cyan-200/15 bg-cyan-300/6 p-8 backdrop-blur-xl md:p-12">
+          <div className="relative overflow-hidden rounded-3xl border border-cyan-200/10 bg-cyan-300/6 p-8 backdrop-blur-xl md:p-12">
             <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-violet-400/10 blur-3xl" />
 
             <div className="relative">

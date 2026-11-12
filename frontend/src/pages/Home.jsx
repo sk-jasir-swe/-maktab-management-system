@@ -191,7 +191,7 @@ function Home() {
             </div>
 
             <div className="min-w-0">
-              <h1 className="truncate text-sm font-bold tracking-wide sm:text-lg">
+              <h1 className="whitespace-normal text-xs font-bold leading-tight tracking-wide sm:text-sm xl:text-base">
                 Siddiqua Deeniyat Munazzam Maktab
               </h1>
 

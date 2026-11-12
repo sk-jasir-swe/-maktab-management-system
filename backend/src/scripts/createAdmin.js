@@ -1,13 +1,21 @@
+require("dotenv").config();
+
 const bcrypt = require("bcryptjs");
 const Admin = require("../models/admin.model");
 const connectDB = require("../config/db");
 
 async function createAdmin() {
     try {
+        const { ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD } = process.env;
+
+        if (!ADMIN_NAME || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
+            throw new Error("ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD must be set in backend/.env");
+        }
+
         await connectDB();
 
         const existingAdmin = await Admin.findOne({
-            email: "admin@maktab.com"
+            email: ADMIN_EMAIL
         });
 
         if (existingAdmin) {
@@ -15,11 +23,11 @@ async function createAdmin() {
             return;
         }
 
-        const password = await bcrypt.hash("Admin@123", 10);
+        const password = await bcrypt.hash(ADMIN_PASSWORD, 10);
 
         await Admin.create({
-            name: "Maktab Admin",
-            email: "admin@maktab.com",
+            name: ADMIN_NAME,
+            email: ADMIN_EMAIL,
             password,
             role: "admin"
         });

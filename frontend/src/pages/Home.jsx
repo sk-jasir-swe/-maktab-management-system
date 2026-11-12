@@ -166,7 +166,12 @@ function Home() {
                 New Academic Session 2026–27
               </span>
 
-              <span className="text-violet-400">✦</span>
+              <img
+                src="/images/siddiqua-deeniyat-favicon.png"
+                alt=""
+                aria-hidden="true"
+                className="h-5 w-5 shrink-0 object-contain"
+              />
 
               <Link
                 to="/admission"

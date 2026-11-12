@@ -526,6 +526,10 @@ function Home() {
                 </span>
               </h2>
 
+              <p className="mt-5 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.08] px-4 py-2 text-sm font-semibold text-cyan-200">
+                Established in 2026
+              </p>
+
               <p className="mt-5 leading-8 text-white/60">
                 Our aim is to provide students with a supportive learning
                 environment where they can develop knowledge, discipline,

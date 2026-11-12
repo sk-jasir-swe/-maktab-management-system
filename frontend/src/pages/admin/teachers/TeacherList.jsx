@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../../../services/api'
+import PassportPhotoUpload from '../../../components/PassportPhotoUpload'
 import '../../../App.css'
 
 const initialForm = {
@@ -18,6 +19,7 @@ function Teachers() {
   const [teachers, setTeachers] = useState([])
   const [formData, setFormData] = useState(initialForm)
   const [photo, setPhoto] = useState(null)
+  const [photoProcessing, setPhotoProcessing] = useState(false)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [editingId, setEditingId] = useState(null)
@@ -103,7 +105,7 @@ function Teachers() {
   async function handleSubmit(event) {
     event.preventDefault()
 
-    if (saving) return
+    if (saving || photoProcessing) return
 
     const phone = formData.phone.trim()
     const whatsappNumber = formData.whatsappNumber.trim()
@@ -497,29 +499,12 @@ function Teachers() {
 
                 {/* Photo */}
                 <div className="sm:col-span-2 lg:col-span-3">
-                  <label htmlFor="photo" className="text-sm text-white/75">
-                    Teacher Photo (Optional)
-                  </label>
-
-                  <input
-                    id="photo"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(event) =>
-                      setPhoto(event.target.files?.[0] || null)
-                    }
-                    className="mt-2 block w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/60 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-400 file:px-4 file:py-2 file:font-semibold file:text-[#0b1026]"
+                  <PassportPhotoUpload
+                    key={`${editingId || 'new'}-${showForm}`}
+                    onChange={setPhoto}
+                    onProcessingChange={setPhotoProcessing}
+                    disabled={saving}
                   />
-
-                  <p className="mt-2 text-xs text-white/40">
-                    JPG, PNG or WEBP. Maximum size 5 MB.
-                  </p>
-
-                  {photo && (
-                    <p className="mt-2 text-sm text-cyan-300">
-                      Selected: {photo.name}
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -527,11 +512,13 @@ function Teachers() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || photoProcessing}
                   className="rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {saving
                     ? 'Saving...'
+                    : photoProcessing
+                      ? 'Preparing photo...'
                     : editingId
                       ? 'Update Teacher'
                       : 'Save Teacher'}

@@ -645,7 +645,7 @@ function ExamsResults() {
                         <option value="">Select student</option>
                         {students.map((student) => (
                           <option key={student._id} value={student._id}>
-                            {student.name}
+                            {student.name} — Roll No. {student.rollNo || 'Not assigned'}
                           </option>
                         ))}
                       </select>

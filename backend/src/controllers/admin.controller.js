@@ -206,8 +206,68 @@ async function logoutAdmin(req, res) {
     }
 }
 
+async function changeAdminPassword(req, res) {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({
+                message: "Current password and new password are required"
+            });
+        }
+
+        if (newPassword.length < 8) {
+            return res.status(400).json({
+                message: "New password must be at least 8 characters long"
+            });
+        }
+
+        const admin = await Admin.findById(req.admin.id);
+
+        if (!admin) {
+            return res.status(404).json({ message: "Admin account not found" });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(
+            currentPassword,
+            admin.password
+        );
+
+        if (!isPasswordCorrect) {
+            return res.status(401).json({ message: "Current password is incorrect" });
+        }
+
+        admin.password = await bcrypt.hash(newPassword, 10);
+        await admin.save();
+
+        await Session.updateMany(
+            { admin: admin._id, revoked: false },
+            { $set: { revoked: true } }
+        );
+
+        res.clearCookie("accessToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        });
+        res.clearCookie("refreshToken", {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        });
+
+        return res.status(200).json({
+            message: "Password changed. Please sign in with your new password."
+        });
+    } catch (error) {
+        console.error("Admin password change error:", error);
+        return res.status(500).json({ message: "Unable to change password" });
+    }
+}
+
 module.exports = {
     loginAdmin,
     refreshAccessToken,
-    logoutAdmin
+    logoutAdmin,
+    changeAdminPassword
 };

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { apiRequest } from '../services/api'
 import '../App.css'
 
@@ -13,6 +13,7 @@ function AdminLogin() {
   const [error, setError] = useState('')
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -83,6 +84,15 @@ function AdminLogin() {
         </div>
 
         {/* Error Message */}
+        {location.state?.message && (
+          <div
+            role="status"
+            className="mb-5 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm text-emerald-200"
+          >
+            {location.state.message}
+          </div>
+        )}
+
         {error && (
           <div
             role="alert"

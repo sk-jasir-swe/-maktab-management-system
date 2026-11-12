@@ -11,6 +11,13 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  })
+  const [passwordError, setPasswordError] = useState('')
+  const [changingPassword, setChangingPassword] = useState(false)
 
 
   // Fetch dashboard statistics
@@ -69,6 +76,44 @@ function AdminDashboard() {
       )
     } finally {
       setLoggingOut(false)
+    }
+  }
+
+  async function handleChangePassword(event) {
+    event.preventDefault()
+    setPasswordError('')
+
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters long.')
+      return
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError('New passwords do not match.')
+      return
+    }
+
+    setChangingPassword(true)
+
+    try {
+      const response = await apiRequest('/admin/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      })
+
+      resetAdminVerification()
+      navigate('/admin/login', {
+        replace: true,
+        state: { message: response.message },
+      })
+    } catch (err) {
+      setPasswordError(err.message || 'Unable to change password.')
+    } finally {
+      setChangingPassword(false)
     }
   }
 
@@ -261,6 +306,57 @@ function AdminDashboard() {
               Manage students, teachers, admissions, fee payments,
               examinations and other Maktab activities from one place.
             </p>
+          </section>
+
+          {/* Change admin password */}
+          <section className="mb-12 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold">Change Password</h3>
+              <p className="mt-2 text-sm text-white/50">
+                Verify your current password, then choose a new one.
+              </p>
+            </div>
+
+            {passwordError && (
+              <div role="alert" className="mb-5 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">
+                {passwordError}
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword} className="grid gap-5 sm:grid-cols-2">
+              {[
+                { name: 'currentPassword', label: 'Current password', autoComplete: 'current-password' },
+                { name: 'newPassword', label: 'New password', autoComplete: 'new-password' },
+                { name: 'confirmPassword', label: 'Confirm new password', autoComplete: 'new-password' },
+              ].map((field) => (
+                <label key={field.name} className="text-sm font-medium text-white/75">
+                  {field.label}
+                  <input
+                    name={field.name}
+                    type="password"
+                    required
+                    minLength={field.name === 'currentPassword' ? undefined : 8}
+                    autoComplete={field.autoComplete}
+                    value={passwordForm[field.name]}
+                    onChange={(event) => setPasswordForm((previous) => ({
+                      ...previous,
+                      [field.name]: event.target.value,
+                    }))}
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10"
+                  />
+                </label>
+              ))}
+
+              <div className="sm:col-span-2">
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {changingPassword ? 'Changing password...' : 'Update password'}
+                </button>
+              </div>
+            </form>
           </section>
 
 

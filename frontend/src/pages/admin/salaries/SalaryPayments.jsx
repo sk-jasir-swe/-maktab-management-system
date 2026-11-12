@@ -50,6 +50,9 @@ function SalaryPayments() {
   const [form, setForm] = useState(initialForm)
   const [editingId, setEditingId] = useState(null)
   const [showForm, setShowForm] = useState(false)
+  const [showSalarySettings, setShowSalarySettings] = useState(false)
+  const [salarySettingForm, setSalarySettingForm] = useState({ teacherId: '', amount: '' })
+  const [savingSalarySetting, setSavingSalarySetting] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -106,6 +109,42 @@ function SalaryPayments() {
     setShowForm(true)
     setError('')
     setSuccess('')
+  }
+
+  function handleSalarySettingChange(event) {
+    const teacherId = event.target.value
+    const selectedTeacher = teachers.find((teacher) => teacher._id === teacherId)
+    setSalarySettingForm({
+      teacherId,
+      amount: selectedTeacher?.monthlySalary ?? '',
+    })
+  }
+
+  async function saveSalarySetting(event) {
+    event.preventDefault()
+    setSavingSalarySetting(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      await apiRequest('/salary-payments/monthly-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherId: salarySettingForm.teacherId,
+          amount: Number(salarySettingForm.amount),
+        }),
+      })
+
+      setShowSalarySettings(false)
+      setSalarySettingForm({ teacherId: '', amount: '' })
+      setSuccess('Teacher monthly salary saved successfully.')
+      await loadData()
+    } catch (err) {
+      setError(err.message || 'Unable to save teacher monthly salary.')
+    } finally {
+      setSavingSalarySetting(false)
+    }
   }
 
   function openEditForm(payment) {
@@ -330,13 +369,22 @@ function SalaryPayments() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={openAddForm}
-            className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg transition hover:bg-[#38e6b7]"
-          >
-            + Record Salary
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setShowSalarySettings((open) => !open)}
+              className="rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-5 py-3 font-semibold text-cyan-200 transition hover:bg-cyan-300/15"
+            >
+              ⚙ Set Teacher Salary
+            </button>
+            <button
+              type="button"
+              onClick={openAddForm}
+              className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg transition hover:bg-[#38e6b7]"
+            >
+              + Record Salary
+            </button>
+          </div>
         </header>
 
         {/* Alerts */}
@@ -350,6 +398,62 @@ function SalaryPayments() {
           <div className="mb-5 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-200">
             {success}
           </div>
+        )}
+
+        {showSalarySettings && (
+          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+            <div className="mb-6">
+              <h2 className="text-xl font-bold">Set Monthly Teacher Salary</h2>
+              <p className="mt-2 text-sm leading-6 text-gray-400">
+                Save a monthly amount for an active teacher. A pending salary record for each month will use this amount; admins can edit the payment amount before marking it paid.
+              </p>
+            </div>
+            <form onSubmit={saveSalarySetting} className="grid gap-5 sm:grid-cols-2">
+              <FormField label="Select Active Teacher">
+                <select
+                  value={salarySettingForm.teacherId}
+                  onChange={handleSalarySettingChange}
+                  required
+                  className={inputClass}
+                >
+                  <option value="">Choose teacher</option>
+                  {teachers.filter((teacher) => teacher.status === 'active').map((teacher) => (
+                    <option key={teacher._id} value={teacher._id}>
+                      {teacher.name} — {teacher.subject}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+              <FormField label="Monthly Salary Amount (₹)">
+                <input
+                  type="number"
+                  value={salarySettingForm.amount}
+                  onChange={(event) => setSalarySettingForm((previous) => ({ ...previous, amount: event.target.value }))}
+                  min="0.01"
+                  step="0.01"
+                  required
+                  placeholder="Enter monthly salary"
+                  className={inputClass}
+                />
+              </FormField>
+              <div className="flex flex-wrap gap-3 sm:col-span-2">
+                <button
+                  type="submit"
+                  disabled={savingSalarySetting}
+                  className="rounded-xl bg-[#00d5a0] px-6 py-3 font-semibold text-[#06251a] transition hover:bg-[#38e6b7] disabled:opacity-60"
+                >
+                  {savingSalarySetting ? 'Saving...' : 'Save Monthly Salary'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSalarySettings(false)}
+                  className="rounded-xl border border-white/10 px-6 py-3 font-semibold text-gray-300 transition hover:bg-white/5"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </section>
         )}
 
         {/* Statistics */}

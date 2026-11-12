@@ -368,7 +368,7 @@ function FeePayments() {
 
   return (
     <div
-      className="fee-payments-page min-h-screen bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-6 text-white sm:px-8 sm:py-8"
+      className="fee-payments-page min-h-screen bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-6 text-white sm:px-8 sm:py-8"
       style={{
         background:
           'radial-gradient(ellipse at 10% 0%, rgba(0,213,160,0.08), transparent 35%), linear-gradient(135deg, #0b1026 0%, #081e16 55%, #071910 100%)',

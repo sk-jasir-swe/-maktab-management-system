@@ -37,6 +37,11 @@ const teacherSchema = new mongoose.Schema(
             trim: true
         },
 
+        monthlySalary: {
+            type: Number,
+            min: 0
+        },
+
         address: {
             type: String,
             trim: true

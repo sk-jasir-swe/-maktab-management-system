@@ -6,6 +6,12 @@ const validateObjectId = require("../middleware/validateObjectId.middleware");
 
 const router = express.Router();
 
+router.put(
+    "/monthly-settings",
+    authenticateAdmin,
+    salaryPaymentController.updateMonthlySalarySetting
+);
+
 
 // Create Salary Payment
 router.post(

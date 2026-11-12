@@ -126,10 +126,27 @@ function AdminRoute({ children }) {
   return children
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    const root = document.documentElement
+    const previousScrollBehavior = root.style.scrollBehavior
+
+    root.style.scrollBehavior = 'auto'
+    window.scrollTo(0, 0)
+    root.style.scrollBehavior = previousScrollBehavior
+  }, [pathname])
+
+  return null
+}
+
 
 function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       {/* Public Pages */}
       <Route
         path="/"
@@ -295,7 +312,8 @@ function App() {
         path="*"
         element={<Navigate to="/" replace />}
       />
-    </Routes>
+      </Routes>
+    </>
   )
 }
 

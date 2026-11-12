@@ -5,14 +5,22 @@ import '../App.css'
 
 const initialFormData = {
   studentName: '',
-  fatherName: '',
-  motherName: '',
+  guardianName: '',
+  aadhaarNo: '',
   dateOfBirth: '',
-  gender: '',
+  age: '',
+  permanentAddress: '',
+  residentialAddress: '',
+  schoolName: '',
+  schoolClass: '',
+  schoolHour: '',
+  tuitionHour: '',
+  preferredTime: '',
   phone: '',
   whatsappNumber: '',
-  address: '',
-  classTime: '',
+  guardianAadhaarNo: '',
+  guardianProfession: '',
+  preferredCourseClass: '',
 }
 
 function Admission() {
@@ -26,9 +34,12 @@ function Admission() {
 
     let updatedValue = value
 
-    // Phone aur WhatsApp number mein sirf 10 digits allow honge
     if (name === 'phone' || name === 'whatsappNumber') {
       updatedValue = value.replace(/\D/g, '').slice(0, 10)
+    } else if (name === 'aadhaarNo' || name === 'guardianAadhaarNo') {
+      updatedValue = value.replace(/\D/g, '').slice(0, 12)
+    } else if (name === 'studentName') {
+      updatedValue = value.toUpperCase()
     }
 
     setFormData((previous) => ({
@@ -56,6 +67,16 @@ function Admission() {
       return
     }
 
+    if (formData.aadhaarNo && !/^\d{12}$/.test(formData.aadhaarNo)) {
+      setError('Student Aadhaar number must contain exactly 12 digits.')
+      return
+    }
+
+    if (formData.guardianAadhaarNo && !/^\d{12}$/.test(formData.guardianAadhaarNo)) {
+      setError('Guardian Aadhaar number must contain exactly 12 digits.')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -65,7 +86,12 @@ function Admission() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          fatherName: formData.guardianName,
+          address: formData.permanentAddress,
+          classTime: formData.preferredTime,
+        }),
       })
 
       const generatedNumber =
@@ -210,7 +236,8 @@ function Admission() {
 
               <p className="mt-3 leading-7 text-white/50">
                 Please provide the student's details to submit an admission
-                application. The application will be reviewed by the admin.
+                application. Roll No., Code No. and Form No. are assigned by
+                the Maktab admin after admission is accepted.
               </p>
             </div>
 
@@ -226,211 +253,85 @@ function Admission() {
 
             <form onSubmit={handleSubmit}>
               <div className="grid gap-5 sm:grid-cols-2">
-                {/* Student name */}
+                {[
+                  { name: 'studentName', label: "Student's Name *", placeholder: 'Full name in capital letters', required: true, autoComplete: 'name', uppercase: true },
+                  { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit student Aadhaar', inputMode: 'numeric', maxLength: 12 },
+                  { name: 'dateOfBirth', label: 'Date of Birth *', type: 'date', required: true },
+                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
+                  { name: 'schoolName', label: 'Name of the School', placeholder: 'If currently attending school' },
+                  { name: 'schoolClass', label: 'Class', placeholder: 'School class' },
+                  { name: 'schoolHour', label: 'School Hour', placeholder: 'School timing' },
+                  { name: 'tuitionHour', label: 'Tuition Hour', placeholder: 'Tuition timing' },
+                  { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true, autoComplete: 'tel-national' },
+                  { name: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '10-digit WhatsApp number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true },
+                  { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
+                  { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit guardian Aadhaar', inputMode: 'numeric', maxLength: 12 },
+                  { name: 'guardianProfession', label: "Guardian's Profession", placeholder: 'Business, Job, Farmer, etc.' },
+                ].map((field) => (
+                  <div key={field.name}>
+                    <label className={labelClass} htmlFor={field.name}>{field.label}</label>
+                    <input
+                      className={`${inputClass} ${field.uppercase ? 'uppercase' : ''}`}
+                      id={field.name}
+                      name={field.name}
+                      type={field.type || 'text'}
+                      inputMode={field.inputMode}
+                      pattern={field.pattern}
+                      minLength={field.minLength}
+                      maxLength={field.maxLength}
+                      min={field.min}
+                      max={field.max}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      placeholder={field.placeholder}
+                      autoComplete={field.autoComplete}
+                      required={field.required}
+                    />
+                  </div>
+                ))}
+
                 <div>
-                  <label className={labelClass} htmlFor="studentName">
-                    Student Name *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="studentName"
-                    name="studentName"
-                    value={formData.studentName}
-                    onChange={handleChange}
-                    placeholder="Enter student name"
-                    autoComplete="name"
-                    required
-                  />
-                </div>
-
-                {/* Date of birth */}
-                <div>
-                  <label className={labelClass} htmlFor="dateOfBirth">
-                    Date of Birth *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                {/* Father's name */}
-                <div>
-                  <label className={labelClass} htmlFor="fatherName">
-                    Father's Name *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="fatherName"
-                    name="fatherName"
-                    value={formData.fatherName}
-                    onChange={handleChange}
-                    placeholder="Enter father's name"
-                    required
-                  />
-                </div>
-
-                {/* Mother's name */}
-                <div>
-                  <label className={labelClass} htmlFor="motherName">
-                    Mother's Name *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="motherName"
-                    name="motherName"
-                    value={formData.motherName}
-                    onChange={handleChange}
-                    placeholder="Enter mother's name"
-                    required
-                  />
-                </div>
-
-                {/* Gender */}
-                <div>
-                  <label className={labelClass} htmlFor="gender">
-                    Gender *
-                  </label>
-
-                  <select
-                    className={inputClass}
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled className="bg-[#111935]">
-                      Select gender
-                    </option>
-
-                    <option value="male" className="bg-[#111935]">
-                      Male
-                    </option>
-
-                    <option value="female" className="bg-[#111935]">
-                      Female
-                    </option>
-
-                    <option value="other" className="bg-[#111935]">
-                      Other
-                    </option>
+                  <label className={labelClass} htmlFor="preferredTime">Preferred Time *</label>
+                  <select className={inputClass} id="preferredTime" name="preferredTime" value={formData.preferredTime} onChange={handleChange} required>
+                    <option value="" disabled>Select preferred time</option>
+                    <option value="6:30 AM - 7:45 AM">6:30 AM - 7:45 AM</option>
+                    <option value="7:45 AM - 9:00 AM">7:45 AM - 9:00 AM</option>
+                    <option value="9:00 AM - 10:15 AM">9:00 AM - 10:15 AM</option>
+                    <option value="4:00 PM - 5:15 PM">4:00 PM - 5:15 PM</option>
+                    <option value="5:15 PM - 6:30 PM">5:15 PM - 6:30 PM</option>
+                    <option value="6:30 PM - 7:45 PM">6:30 PM - 7:45 PM</option>
                   </select>
                 </div>
 
-                {/* Phone number */}
                 <div>
-                  <label className={labelClass} htmlFor="phone">
-                    Phone Number *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]{10}"
-                    minLength={10}
-                    maxLength={10}
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Enter 10-digit phone number"
-                    autoComplete="tel-national"
-                    title="Please enter exactly 10 digits."
-                    required
-                  />
-
-                  <p className="mt-1 text-xs text-white/40">
-                    Enter exactly 10 digits.
-                  </p>
-                </div>
-
-                {/* WhatsApp number */}
-                <div>
-                  <label className={labelClass} htmlFor="whatsappNumber">
-                    WhatsApp Number *
-                  </label>
-
-                  <input
-                    className={inputClass}
-                    id="whatsappNumber"
-                    name="whatsappNumber"
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]{10}"
-                    minLength={10}
-                    maxLength={10}
-                    value={formData.whatsappNumber}
-                    onChange={handleChange}
-                    placeholder="Enter 10-digit WhatsApp number"
-                    autoComplete="off"
-                    title="Please enter exactly 10 digits."
-                    required
-                  />
-
-                  <p className="mt-1 text-xs text-white/40">
-                    Enter exactly 10 digits. Both numbers can be the same.
-                  </p>
-                </div>
-
-                {/* Class timing */}
-                <div className="sm:col-span-2">
-                  <label className={labelClass} htmlFor="classTime">
-                    Preferred Class Timing *
-                  </label>
-
-                  <select
-                    className={inputClass}
-                    id="classTime"
-                    name="classTime"
-                    value={formData.classTime}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled className="bg-[#111935]">
-                      Select class timing
-                    </option>
-
-                    <option value="morning" className="bg-[#111935]">
-                      Morning
-                    </option>
-
-                    <option value="after_asr" className="bg-[#111935]">
-                      After Asr
-                    </option>
-
-                    <option value="after_maghrib" className="bg-[#111935]">
-                      After Maghrib
-                    </option>
+                  <label className={labelClass} htmlFor="preferredCourseClass">Preferred Course/Class *</label>
+                  <select className={inputClass} id="preferredCourseClass" name="preferredCourseClass" value={formData.preferredCourseClass} onChange={handleChange} required>
+                    <option value="" disabled>Select course/class</option>
+                    <option value="Primary">Class Primary</option>
+                    <option value="00">00</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="Advance">Advance</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="Balegan">Balegan</option>
                   </select>
                 </div>
 
-                {/* Address */}
                 <div className="sm:col-span-2">
-                  <label className={labelClass} htmlFor="address">
-                    Full Address *
-                  </label>
+                  <label className={labelClass} htmlFor="permanentAddress">Permanent Full Address *</label>
+                  <textarea className={`${inputClass} min-h-24 resize-y`} id="permanentAddress" name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} placeholder="Permanent home address" rows={3} required />
+                </div>
 
-                  <textarea
-                    className={`${inputClass} min-h-28 resize-y`}
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Enter complete address"
-                    rows={4}
-                    required
-                  />
+                <div className="sm:col-span-2">
+                  <label className={labelClass} htmlFor="residentialAddress">Residential Full Address</label>
+                  <textarea className={`${inputClass} min-h-24 resize-y`} id="residentialAddress" name="residentialAddress" value={formData.residentialAddress} onChange={handleChange} placeholder="Current residential address" rows={3} />
                 </div>
               </div>
 

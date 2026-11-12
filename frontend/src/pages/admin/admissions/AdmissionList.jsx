@@ -91,6 +91,7 @@ function Admissions() {
 
     const matchesSearch = [
       admission.studentName,
+      admission.guardianName,
       admission.fatherName,
       admission.phone,
     ].some((value) =>
@@ -234,7 +235,7 @@ function Admissions() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by student name, father name or phone..."
+            placeholder="Search by student name, guardian or phone..."
             className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
           />
 
@@ -284,10 +285,10 @@ function Admissions() {
                 <thead className="bg-white/3 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4 font-medium">Student</th>
-                    <th className="px-6 py-4 font-medium">Father Name</th>
+                    <th className="px-6 py-4 font-medium">Guardian Name</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
                     <th className="px-6 py-4 font-medium">WhatsApp</th>
-                    <th className="px-6 py-4 font-medium">Class Time</th>
+                    <th className="px-6 py-4 font-medium">Preferred Time</th>
                     <th className="px-6 py-4 font-medium">Applied On</th>
                     <th className="px-6 py-4 font-medium">Status</th>
                     <th className="px-6 py-4 font-medium">Actions</th>
@@ -306,12 +307,12 @@ function Admissions() {
                         </p>
 
                         <p className="mt-1 text-xs text-white/40">
-                          {admission.gender || '—'}
+                          {admission.preferredCourseClass || '—'}
                         </p>
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {admission.fatherName || '—'}
+                        {admission.guardianName || admission.fatherName || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
@@ -323,7 +324,7 @@ function Admissions() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {formatClassTime(admission.classTime)}
+                        {formatClassTime(admission.preferredTime || admission.classTime)}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
@@ -428,25 +429,33 @@ function Admissions() {
               <div className="mt-7 grid gap-5 sm:grid-cols-2">
                 {[
                   ['Student Name', selectedAdmission.studentName],
-                  ['Father Name', selectedAdmission.fatherName],
-                  ['Mother Name', selectedAdmission.motherName],
+                  ["Guardian's Name", selectedAdmission.guardianName || selectedAdmission.fatherName],
+                  ['Student Aadhar No.', selectedAdmission.aadhaarNo],
                   [
                     'Date of Birth',
                     formatDate(selectedAdmission.dateOfBirth),
                   ],
-                  ['Gender', selectedAdmission.gender],
-                  ['Phone', selectedAdmission.phone],
+                  ['Age', selectedAdmission.age],
+                  ['Permanent Full Address', selectedAdmission.permanentAddress || selectedAdmission.address],
+                  ['Residential Full Address', selectedAdmission.residentialAddress],
+                  ['Name of the School', selectedAdmission.schoolName],
+                  ['Class', selectedAdmission.schoolClass],
+                  ['School Hour', selectedAdmission.schoolHour],
+                  ['Tuition Hour', selectedAdmission.tuitionHour],
+                  ['Mobile No.', selectedAdmission.phone],
                   ['WhatsApp Number', selectedAdmission.whatsappNumber],
+                  ["Guardian's Aadhar No.", selectedAdmission.guardianAadhaarNo],
+                  ["Guardian's Profession", selectedAdmission.guardianProfession],
+                  ['Preferred Course/Class', selectedAdmission.preferredCourseClass],
                   [
                     'Application Number',
                     selectedAdmission.applicationNumber,
                   ],
                   [
-                    'Class Time',
-                    formatClassTime(selectedAdmission.classTime),
+                    'Preferred Time',
+                    formatClassTime(selectedAdmission.preferredTime || selectedAdmission.classTime),
                   ],
                   ['Status', selectedAdmission.status],
-                  ['Address', selectedAdmission.address],
                   [
                     'Application Date',
                     formatDate(selectedAdmission.createdAt),

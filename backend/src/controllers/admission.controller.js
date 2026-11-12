@@ -21,25 +21,42 @@ async function createAdmission(req, res) {
         const {
             studentName,
             fatherName,
+            guardianName,
             motherName,
+            aadhaarNo,
+            guardianAadhaarNo,
+            guardianProfession,
+            age,
             dateOfBirth,
             gender,
             phone,
             whatsappNumber,
+            permanentAddress,
+            residentialAddress,
+            schoolName,
+            schoolClass,
+            schoolHour,
+            tuitionHour,
+            preferredTime,
+            preferredCourseClass,
             address,
             classTime
         } = req.body;
 
+        const applicantGuardianName = guardianName || fatherName;
+        const applicantPreferredTime = preferredTime || classTime;
+
         // Required field validation
         if (
             !studentName ||
-            !fatherName ||
+            !applicantGuardianName ||
             !phone ||
             !whatsappNumber ||
-            !classTime
+            !applicantPreferredTime ||
+            !preferredCourseClass
         ) {
             return res.status(400).json({
-                message: "Student name, father name, phone number, WhatsApp number and class time are required"
+                message: "Student name, guardian name, phone, WhatsApp, preferred time and course/class are required"
             });
         }
 
@@ -60,6 +77,17 @@ async function createAdmission(req, res) {
             });
         }
 
+        for (const [label, value] of [
+            ["Student Aadhaar number", aadhaarNo],
+            ["Guardian Aadhaar number", guardianAadhaarNo]
+        ]) {
+            if (value && !/^\d{12}$/.test(String(value).trim())) {
+                return res.status(400).json({
+                    message: `${label} must contain exactly 12 digits`
+                });
+            }
+        }
+
         let admission;
         let attempts = 0;
 
@@ -70,15 +98,28 @@ async function createAdmission(req, res) {
             try {
                 admission = await Admission.create({
                     applicationNumber: generateApplicationNumber(),
-                    studentName: studentName.trim(),
-                    fatherName: fatherName.trim(),
+                    studentName: studentName.trim().toUpperCase(),
+                    fatherName: applicantGuardianName.trim(),
+                    guardianName: applicantGuardianName.trim(),
                     motherName,
+                    aadhaarNo,
+                    guardianAadhaarNo,
+                    guardianProfession,
+                    age: age === "" ? undefined : age,
                     dateOfBirth,
                     gender,
                     phone: phone.trim(),
                     whatsappNumber: whatsappNumber.trim(),
-                    address,
-                    classTime,
+                    permanentAddress: permanentAddress || address,
+                    residentialAddress,
+                    address: permanentAddress || address,
+                    schoolName,
+                    schoolClass,
+                    schoolHour,
+                    tuitionHour,
+                    preferredTime: applicantPreferredTime,
+                    preferredCourseClass,
+                    classTime: applicantPreferredTime.toLowerCase(),
                     status: "pending"
                 });
             } catch (error) {
@@ -282,14 +323,27 @@ async function updateAdmissionStatus(req, res) {
     [
         {
             name: admission.studentName,
-            fatherName: admission.fatherName,
+            fatherName: admission.guardianName || admission.fatherName,
+            guardianName: admission.guardianName || admission.fatherName,
             motherName: admission.motherName,
+            aadhaarNo: admission.aadhaarNo,
+            guardianAadhaarNo: admission.guardianAadhaarNo,
+            guardianProfession: admission.guardianProfession,
+            age: admission.age,
             dateOfBirth: admission.dateOfBirth,
             gender: admission.gender,
             phone: admission.phone,
             whatsappNumber: admission.whatsappNumber,
-            address: admission.address,
-            classTime: admission.classTime
+            permanentAddress: admission.permanentAddress || admission.address,
+            residentialAddress: admission.residentialAddress,
+            address: admission.permanentAddress || admission.address,
+            schoolName: admission.schoolName,
+            schoolClass: admission.schoolClass,
+            schoolHour: admission.schoolHour,
+            tuitionHour: admission.tuitionHour,
+            preferredTime: admission.preferredTime || admission.classTime,
+            preferredCourseClass: admission.preferredCourseClass,
+            classTime: (admission.preferredTime || admission.classTime).toLowerCase()
         }
     ],
     { session }

@@ -150,7 +150,7 @@ function AdmissionStatus() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-cyan-400 px-6 py-3.5 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mx-auto block rounded-xl bg-cyan-400 px-8 py-3.5 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? 'Checking Status...' : 'Check Status →'}
             </button>

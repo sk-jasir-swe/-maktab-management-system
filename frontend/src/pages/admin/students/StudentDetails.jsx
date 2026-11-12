@@ -33,7 +33,13 @@ function StudentDetails() {
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
       const searchText = search.trim().toLowerCase()
-      const matchesName = [student.name, student.rollNo, student.phone]
+      const matchesName = [
+        student.name,
+        student.rollNo,
+        student.phone,
+        student.whatsappNumber,
+        student.preferredCourseClass,
+      ]
         .some((value) => String(value || '').toLowerCase().includes(searchText))
 
       const matchesClassTime =
@@ -90,6 +96,7 @@ function StudentDetails() {
         ['Tuition Hour', selectedStudent.tuitionHour],
         ['Preferred Time', formatClassTime(selectedStudent.preferredTime || selectedStudent.classTime)],
         ['Mobile No.', selectedStudent.phone],
+        ['WhatsApp Number', selectedStudent.whatsappNumber],
         ["Guardian's Name", selectedStudent.guardianName || selectedStudent.fatherName],
         ["Guardian's Aadhar No.", selectedStudent.guardianAadhaarNo],
         ["Guardian's Professional", selectedStudent.guardianProfession],
@@ -118,7 +125,7 @@ function StudentDetails() {
           </h1>
 
           <p className="mt-3 text-sm text-white/50">
-            Search students by name or roll number and view their complete records.
+              Search by name, roll number, phone or WhatsApp and view complete student records.
           </p>
         </header>
 
@@ -137,8 +144,8 @@ function StudentDetails() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by name, roll number or mobile..."
-            aria-label="Search by name, roll number or mobile"
+            placeholder="Search name, roll no., phone, WhatsApp or class..."
+            aria-label="Search by name, roll number, phone, WhatsApp or class"
             className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-cyan-300/50"
           />
 
@@ -201,12 +208,14 @@ function StudentDetails() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[800px] text-left text-sm">
+              <table className="w-full min-w-[1050px] text-left text-sm">
                 <thead className="bg-white/5 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4">Student Name</th>
                     <th className="px-6 py-4">Roll No.</th>
+                    <th className="px-6 py-4">Phone</th>
                     <th className="px-6 py-4">WhatsApp</th>
+                    <th className="px-6 py-4">Class</th>
                     <th className="px-6 py-4">Preferred Time</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Details</th>
@@ -228,7 +237,15 @@ function StudentDetails() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
+                        {student.phone || '—'}
+                      </td>
+
+                      <td className="px-6 py-4 text-white/65">
                         {student.whatsappNumber || '—'}
+                      </td>
+
+                      <td className="px-6 py-4 text-white/65">
+                        {student.preferredCourseClass || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">

@@ -443,6 +443,8 @@ function Students() {
       student.guardianName,
       student.fatherName,
       student.phone,
+      student.whatsappNumber,
+      student.preferredCourseClass,
     ].some((value) =>
       String(value || '').toLowerCase().includes(searchText),
     )
@@ -871,6 +873,7 @@ function Students() {
                     <th className="px-6 py-4 font-medium">Guardian Name</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
                     <th className="px-6 py-4 font-medium">WhatsApp</th>
+                    <th className="px-6 py-4 font-medium">Class</th>
                     <th className="px-6 py-4 font-medium">Preferred Time</th>
                     <th className="px-6 py-4 font-medium">Admission Date</th>
                     <th className="px-6 py-4 font-medium">Status</th>
@@ -920,6 +923,10 @@ function Students() {
 
                       <td className="px-6 py-4 text-white/65">
                         {student.whatsappNumber || '—'}
+                      </td>
+
+                      <td className="px-6 py-4 text-white/65">
+                        {student.preferredCourseClass || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">

@@ -296,17 +296,7 @@ function Home() {
       <main id="home" className="relative z-10">
 
         {/* Hero Section */}
-        <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
-          <div className="overflow-hidden rounded-2xl border border-white/15 bg-[#071a59] shadow-2xl shadow-black/25">
-            <img
-              src="/images/institution-banner.png"
-              alt="Siddiqua Deeniyat Munazzam Maktab, established 2026. Contact: 9002569862 and 8348565184."
-              className="block h-auto w-full object-contain"
-              fetchPriority="high"
-            />
-          </div>
-
-          <div className="mt-10 grid min-h-[60vh] items-center gap-14 md:grid-cols-2">
+        <section className="mx-auto grid min-h-[78vh] max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2">
           <div>
             <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 text-sm text-cyan-200">
               <span className="h-2 w-2 rounded-full bg-violet-400" />
@@ -445,7 +435,6 @@ function Home() {
                 </p>
               </div>
             </div>
-          </div>
           </div>
         </section>
 

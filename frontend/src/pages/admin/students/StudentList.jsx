@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../../../services/api'
 import '../../../App.css'
@@ -32,73 +32,76 @@ const initialForm = {
   status: '',
 }
 
-function cropToPassportPhoto(file) {
+function loadCropImage(file) {
   return new Promise((resolve, reject) => {
-    const sourceUrl = URL.createObjectURL(file)
+    const objectUrl = URL.createObjectURL(file)
     const image = new Image()
 
     image.onload = () => {
-      URL.revokeObjectURL(sourceUrl)
-
-      const targetRatio = 7 / 9
-      const sourceRatio = image.width / image.height
-      let cropWidth = image.width
-      let cropHeight = image.height
-      let cropX = 0
-      let cropY = 0
-
-      if (sourceRatio > targetRatio) {
-        cropWidth = image.height * targetRatio
-        cropX = (image.width - cropWidth) / 2
-      } else {
-        cropHeight = image.width / targetRatio
-        cropY = (image.height - cropHeight) * 0.22
-      }
-
-      const canvas = document.createElement('canvas')
-      canvas.width = 413
-      canvas.height = 531
-
-      const context = canvas.getContext('2d')
-      if (!context) {
-        reject(new Error('Unable to prepare the passport photo.'))
-        return
-      }
-
-      context.imageSmoothingQuality = 'high'
-      context.drawImage(
-        image,
-        cropX,
-        cropY,
-        cropWidth,
-        cropHeight,
-        0,
-        0,
-        canvas.width,
-        canvas.height,
-      )
-
-      canvas.toBlob((blob) => {
-        if (!blob) {
-          reject(new Error('Unable to crop this image. Please choose another photo.'))
-          return
-        }
-
-        const croppedFile = new File(
-          [blob],
-          `${file.name.replace(/\.[^.]+$/, '')}-passport.jpg`,
-          { type: 'image/jpeg' },
-        )
-        resolve(croppedFile)
-      }, 'image/jpeg', 0.92)
+      resolve({ image, objectUrl })
     }
 
     image.onerror = () => {
-      URL.revokeObjectURL(sourceUrl)
+      URL.revokeObjectURL(objectUrl)
       reject(new Error('Unable to read this image. Please choose another photo.'))
     }
 
-    image.src = sourceUrl
+    image.src = objectUrl
+  })
+}
+
+function getInitialCrop(image) {
+  const ratio = 7 / 9
+  let width = image.naturalWidth
+  let height = image.naturalHeight
+
+  if (width / height > ratio) {
+    width = height * ratio
+  } else {
+    height = width / ratio
+  }
+
+  return {
+    x: (image.naturalWidth - width) / 2,
+    y: (image.naturalHeight - height) * 0.22,
+    width,
+    height,
+  }
+}
+
+function renderPassportCrop(image, crop) {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 413
+    canvas.height = 531
+
+    const context = canvas.getContext('2d')
+    if (!context) {
+      reject(new Error('Unable to prepare the passport photo.'))
+      return
+    }
+
+    context.imageSmoothingQuality = 'high'
+    context.drawImage(
+      image,
+      crop.x,
+      crop.y,
+      crop.width,
+      crop.height,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    )
+
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error('Unable to crop this image. Please choose another photo.'))
+        return
+      }
+
+      resolve(new File([blob], 'student-passport-photo.jpg', { type: 'image/jpeg' }))
+    }, 'image/jpeg', 0.92)
   })
 }
 
@@ -108,6 +111,13 @@ function Students() {
   const [photo, setPhoto] = useState(null)
   const [photoPreview, setPhotoPreview] = useState('')
   const [photoProcessing, setPhotoProcessing] = useState(false)
+  const [cropImage, setCropImage] = useState(null)
+  const [cropImageUrl, setCropImageUrl] = useState('')
+  const [cropRect, setCropRect] = useState(null)
+  const [cropZoom, setCropZoom] = useState(1)
+  const [showCropModal, setShowCropModal] = useState(false)
+  const cropDragRef = useRef(null)
+  const cropPreviewCanvasRef = useRef(null)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [editingId, setEditingId] = useState(null)
@@ -124,6 +134,32 @@ function Students() {
   useEffect(() => () => {
     if (photoPreview) URL.revokeObjectURL(photoPreview)
   }, [photoPreview])
+
+  useEffect(() => () => {
+    if (cropImageUrl) URL.revokeObjectURL(cropImageUrl)
+  }, [cropImageUrl])
+
+  useEffect(() => {
+    const canvas = cropPreviewCanvasRef.current
+    if (!canvas || !cropImage || !cropRect) return
+
+    const context = canvas.getContext('2d')
+    if (!context) return
+
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.imageSmoothingQuality = 'high'
+    context.drawImage(
+      cropImage,
+      cropRect.x,
+      cropRect.y,
+      cropRect.width,
+      cropRect.height,
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    )
+  }, [cropImage, cropRect])
 
   async function fetchStudents() {
     try {
@@ -299,21 +335,104 @@ function Students() {
     const selectedPhoto = event.target.files?.[0]
     setPhoto(null)
     setPhotoPreview('')
+    setError('')
 
     if (!selectedPhoto) return
+    event.target.value = ''
 
     try {
       setPhotoProcessing(true)
-      const croppedPhoto = await cropToPassportPhoto(selectedPhoto)
-      setPhoto(croppedPhoto)
-      setPhotoPreview(URL.createObjectURL(croppedPhoto))
-      setError('')
+      const loaded = await loadCropImage(selectedPhoto)
+      setCropImage(loaded.image)
+      setCropImageUrl(loaded.objectUrl)
+      setCropRect(getInitialCrop(loaded.image))
+      setCropZoom(1)
+      setShowCropModal(true)
     } catch (err) {
       setError(err.message || 'Unable to crop this photo.')
       event.target.value = ''
     } finally {
       setPhotoProcessing(false)
     }
+  }
+
+  function cancelPhotoCrop() {
+    setShowCropModal(false)
+    setCropImage(null)
+    setCropImageUrl('')
+    setCropRect(null)
+    setCropZoom(1)
+  }
+
+  async function finishPhotoCrop() {
+    if (!cropImage || !cropRect) return
+
+    try {
+      setPhotoProcessing(true)
+      const croppedPhoto = await renderPassportCrop(cropImage, cropRect)
+      setPhoto(croppedPhoto)
+      setPhotoPreview(URL.createObjectURL(croppedPhoto))
+      cancelPhotoCrop()
+    } catch (err) {
+      setError(err.message || 'Unable to prepare the passport photo.')
+    } finally {
+      setPhotoProcessing(false)
+    }
+  }
+
+  function handleCropPointerDown(event) {
+    if (!cropRect || !cropDisplay) return
+    event.preventDefault()
+    event.currentTarget.setPointerCapture(event.pointerId)
+    cropDragRef.current = {
+      pointerId: event.pointerId,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      x: cropRect.x,
+      y: cropRect.y,
+    }
+  }
+
+  function handleCropPointerMove(event) {
+    const drag = cropDragRef.current
+    if (!drag || !cropImage || !cropRect || !cropDisplay) return
+
+    const maxX = cropImage.naturalWidth - cropRect.width
+    const maxY = cropImage.naturalHeight - cropRect.height
+    const nextX = drag.x + (event.clientX - drag.clientX) / cropDisplay.scale
+    const nextY = drag.y + (event.clientY - drag.clientY) / cropDisplay.scale
+
+    setCropRect((previous) => ({
+      ...previous,
+      x: Math.min(maxX, Math.max(0, nextX)),
+      y: Math.min(maxY, Math.max(0, nextY)),
+    }))
+  }
+
+  function handleCropPointerUp(event) {
+    cropDragRef.current = null
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+  }
+
+  function handleCropZoom(event) {
+    if (!cropImage || !cropRect) return
+
+    const zoom = Number(event.target.value)
+    const baseCrop = getInitialCrop(cropImage)
+    const width = baseCrop.width / zoom
+    const height = baseCrop.height / zoom
+    const centerX = cropRect.x + cropRect.width / 2
+    const centerY = cropRect.y + cropRect.height / 2
+
+    setCropZoom(zoom)
+    setCropRect({
+      x: Math.min(cropImage.naturalWidth - width, Math.max(0, centerX - width / 2)),
+      y: Math.min(cropImage.naturalHeight - height, Math.max(0, centerY - height / 2)),
+      width,
+      height,
+    })
   }
 
   const filteredStudents = students.filter((student) => {
@@ -345,6 +464,26 @@ function Students() {
 
   const inputClass =
     'mt-2 w-full rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10'
+
+  const cropDisplay = cropImage
+    ? (() => {
+        const viewportWidth = typeof window === 'undefined' ? 1024 : window.innerWidth
+        const availableWidth = viewportWidth < 768
+          ? Math.max(220, viewportWidth - 88)
+          : Math.min(500, viewportWidth - 320)
+        const scale = Math.min(
+          1,
+          500 / cropImage.naturalWidth,
+          400 / cropImage.naturalHeight,
+          availableWidth / cropImage.naturalWidth,
+        )
+        return {
+          scale,
+          width: cropImage.naturalWidth * scale,
+          height: cropImage.naturalHeight * scale,
+        }
+      })()
+    : null
 
   function formatClassTime(classTime) {
     if (classTime === 'after_asr') return 'After Asr'
@@ -602,7 +741,7 @@ function Students() {
                   />
 
                   <p className="mt-2 text-xs text-white/40">
-                    JPG, PNG or WEBP. The photo is auto-cropped to passport portrait size (35 × 45 mm).
+                    JPG, PNG or WEBP. Position your photo in the crop tool; upload uses passport portrait size (35 × 45 mm).
                   </p>
 
                   {photoProcessing && (
@@ -824,6 +963,104 @@ function Students() {
           Al-Noor Maktab Management System
         </footer>
       </main>
+
+      {showCropModal && cropImage && cropRect && cropDisplay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-sm">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="photo-crop-title"
+            className="my-auto w-full max-w-4xl rounded-2xl border border-white/10 bg-[#111935] p-5 shadow-2xl sm:p-7"
+          >
+            <div className="mb-6">
+              <h2 id="photo-crop-title" className="text-xl font-bold">Crop Passport Photo</h2>
+              <p className="mt-2 text-sm text-white/50">
+                Drag the crop frame over the photo. The preview shows the 35 × 45 mm image that will be uploaded.
+              </p>
+            </div>
+
+            <div className="grid items-start gap-7 md:grid-cols-[minmax(0,1fr)_180px]">
+              <div>
+                <p className="mb-3 text-sm font-medium text-white/70">Uploaded photo</p>
+                <div
+                  className="relative mx-auto overflow-hidden rounded-xl bg-black/30"
+                  style={{ width: cropDisplay.width, height: cropDisplay.height, maxWidth: '100%' }}
+                >
+                  <img
+                    src={cropImageUrl}
+                    alt="Uploaded student photo"
+                    draggable="false"
+                    className="pointer-events-none block select-none"
+                    style={{ width: cropDisplay.width, height: cropDisplay.height }}
+                  />
+                  <div
+                    aria-label="Move passport crop area"
+                    tabIndex={0}
+                    onPointerDown={handleCropPointerDown}
+                    onPointerMove={handleCropPointerMove}
+                    onPointerUp={handleCropPointerUp}
+                    onPointerCancel={handleCropPointerUp}
+                    className="absolute cursor-move touch-none border-2 border-cyan-300 bg-transparent shadow-[0_0_0_9999px_rgba(0,0,0,0.55)]"
+                    style={{
+                      left: cropRect.x * cropDisplay.scale,
+                      top: cropRect.y * cropDisplay.scale,
+                      width: cropRect.width * cropDisplay.scale,
+                      height: cropRect.height * cropDisplay.scale,
+                    }}
+                  >
+                    <span className="absolute bottom-1 left-1 rounded bg-black/65 px-1.5 py-0.5 text-[10px] text-white">
+                      Drag to position
+                    </span>
+                  </div>
+                </div>
+
+                <label className="mt-5 block text-sm text-white/70">
+                  Zoom
+                  <input
+                    type="range"
+                    min="1"
+                    max="2.5"
+                    step="0.05"
+                    value={cropZoom}
+                    onChange={handleCropZoom}
+                    className="mt-2 block w-full accent-cyan-300"
+                  />
+                </label>
+              </div>
+
+              <div className="flex flex-col items-center rounded-xl border border-white/10 bg-black/20 p-4">
+                <p className="mb-3 text-sm font-medium text-white/70">Passport preview</p>
+                <canvas
+                  ref={cropPreviewCanvasRef}
+                  width="413"
+                  height="531"
+                  className="h-auto w-28 rounded-lg border border-white/15"
+                />
+                <p className="mt-3 text-center text-xs text-white/40">413 × 531 pixels</p>
+              </div>
+            </div>
+
+            <div className="mt-7 flex justify-end gap-3 border-t border-white/10 pt-5">
+              <button
+                type="button"
+                onClick={cancelPhotoCrop}
+                disabled={photoProcessing}
+                className="rounded-xl border border-white/10 px-5 py-3 text-sm text-white/75 transition hover:bg-white/5 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={finishPhotoCrop}
+                disabled={photoProcessing}
+                className="rounded-xl bg-cyan-400 px-6 py-3 text-sm font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {photoProcessing ? 'Preparing...' : 'Done'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

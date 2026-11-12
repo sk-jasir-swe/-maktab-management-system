@@ -429,6 +429,7 @@ function Admissions() {
               <div className="mt-7 grid gap-5 sm:grid-cols-2">
                 {[
                   ['Student Name', selectedAdmission.studentName],
+                  ['Gender', selectedAdmission.gender],
                   ["Guardian's Name", selectedAdmission.guardianName || selectedAdmission.fatherName],
                   ['Student Aadhar No.', selectedAdmission.aadhaarNo],
                   [

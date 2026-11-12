@@ -8,6 +8,7 @@ const initialFormData = {
   guardianName: '',
   aadhaarNo: '',
   dateOfBirth: '',
+  gender: '',
   age: '',
   permanentAddress: '',
   residentialAddress: '',
@@ -289,6 +290,16 @@ function Admission() {
                     />
                   </div>
                 ))}
+
+                <div>
+                  <label className={labelClass} htmlFor="gender">Gender *</label>
+                  <select className={inputClass} id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+                    <option value="" disabled>Select gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
 
                 <div>
                   <label className={labelClass} htmlFor="preferredTime">Preferred Time *</label>

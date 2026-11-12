@@ -22,7 +22,7 @@ const initialForm = {
   guardianProfession: '',
   preferredCourseClass: '',
   fatherName: '',
-  motherName: '',
+  gender: '',
   dateOfBirth: '',
   phone: '',
   whatsappNumber: '',
@@ -218,11 +218,10 @@ function Students() {
       guardianProfession: student.guardianProfession || '',
       preferredCourseClass: student.preferredCourseClass || '',
       fatherName: student.fatherName || '',
-      motherName: student.motherName || '',
       dateOfBirth: student.dateOfBirth
         ? new Date(student.dateOfBirth).toISOString().split('T')[0]
         : '',
-      gender: student.gender || 'male',
+      gender: student.gender || '',
       phone: student.phone || '',
       whatsappNumber: student.whatsappNumber || '',
       address: student.address || '',
@@ -657,6 +656,16 @@ function Students() {
                     />
                   </div>
                 ))}
+
+                <div>
+                  <label htmlFor="gender" className="text-sm text-white/75">Gender *</label>
+                  <select id="gender" name="gender" value={formData.gender} onChange={handleChange} className={inputClass} required>
+                    <option value="" disabled>Select gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
 
                 <div>
                   <label htmlFor="preferredTime" className="text-sm text-white/75">

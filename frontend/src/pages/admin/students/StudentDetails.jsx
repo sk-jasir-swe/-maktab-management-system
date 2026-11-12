@@ -32,9 +32,9 @@ function StudentDetails() {
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
-      const matchesName = (student.name || '')
-        .toLowerCase()
-        .includes(search.trim().toLowerCase())
+      const searchText = search.trim().toLowerCase()
+      const matchesName = [student.name, student.rollNo, student.phone]
+        .some((value) => String(value || '').toLowerCase().includes(searchText))
 
       const matchesClassTime =
         classTimeFilter === 'all' ||
@@ -46,6 +46,10 @@ function StudentDetails() {
       return matchesName && matchesClassTime && matchesStatus
     })
   }, [students, search, classTimeFilter, statusFilter])
+
+  const availableClassTimes = [...new Set(
+    students.map((student) => student.classTime).filter(Boolean),
+  )]
 
   function formatClassTime(value) {
     const labels = {
@@ -69,16 +73,26 @@ function StudentDetails() {
 
   const detailFields = selectedStudent
     ? [
+        ['Roll No.', selectedStudent.rollNo],
+        ['Date', formatDate(selectedStudent.admissionDate)],
+        ['Code No.', selectedStudent.codeNo],
+        ['Form No.', selectedStudent.formNo || '131'],
         ['Student Name', selectedStudent.name],
-        ['Father Name', selectedStudent.fatherName],
-        ['Mother Name', selectedStudent.motherName],
+        ['Aadhar No.', selectedStudent.aadhaarNo],
         ['Date of Birth', formatDate(selectedStudent.dateOfBirth)],
-        ['Gender', selectedStudent.gender],
-        ['Phone Number', selectedStudent.phone],
-        ['WhatsApp Number', selectedStudent.whatsappNumber],
-        ['Address', selectedStudent.address],
-        ['Class Time', formatClassTime(selectedStudent.classTime)],
-        ['Admission Date', formatDate(selectedStudent.admissionDate)],
+        ['Age', selectedStudent.age],
+        ['Permanent Full Address', selectedStudent.permanentAddress || selectedStudent.address],
+        ['Residential Full Address', selectedStudent.residentialAddress],
+        ['Name of the School', selectedStudent.schoolName],
+        ['Class', selectedStudent.schoolClass],
+        ['School Hour', selectedStudent.schoolHour],
+        ['Tuition Hour', selectedStudent.tuitionHour],
+        ['Preferred Time', formatClassTime(selectedStudent.preferredTime || selectedStudent.classTime)],
+        ['Mobile No.', selectedStudent.phone],
+        ["Guardian's Name", selectedStudent.guardianName || selectedStudent.fatherName],
+        ["Guardian's Aadhar No.", selectedStudent.guardianAadhaarNo],
+        ["Guardian's Professional", selectedStudent.guardianProfession],
+        ['Preferred Course/Class', selectedStudent.preferredCourseClass],
         ['Status', selectedStudent.status],
       ]
     : []
@@ -122,8 +136,8 @@ function StudentDetails() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by student name..."
-            aria-label="Search by student name"
+            placeholder="Search by name, roll number or mobile..."
+            aria-label="Search by name, roll number or mobile"
             className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none placeholder:text-white/35 focus:border-cyan-300/50"
           />
 
@@ -134,9 +148,9 @@ function StudentDetails() {
             className="rounded-xl border border-white/10 bg-[#111935] px-4 py-3 text-white outline-none focus:border-cyan-300/50"
           >
             <option value="all">All Class Timings</option>
-            <option value="morning">Morning</option>
-            <option value="after_asr">After Asr</option>
-            <option value="after_maghrib">After Maghrib</option>
+            {availableClassTimes.map((time) => (
+              <option key={time} value={time}>{formatClassTime(time)}</option>
+            ))}
           </select>
 
           <select
@@ -190,9 +204,9 @@ function StudentDetails() {
                 <thead className="bg-white/5 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4">Student Name</th>
-                    <th className="px-6 py-4">Father Name</th>
+                    <th className="px-6 py-4">Roll No.</th>
                     <th className="px-6 py-4">WhatsApp</th>
-                    <th className="px-6 py-4">Class Time</th>
+                    <th className="px-6 py-4">Preferred Time</th>
                     <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Details</th>
                   </tr>
@@ -209,7 +223,7 @@ function StudentDetails() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.fatherName || '—'}
+                        {student.rollNo || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
@@ -217,7 +231,7 @@ function StudentDetails() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {formatClassTime(student.classTime)}
+                        {formatClassTime(student.preferredTime || student.classTime)}
                       </td>
 
                       <td className="px-6 py-4">

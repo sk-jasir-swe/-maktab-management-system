@@ -4,7 +4,23 @@ import { apiRequest } from '../../../services/api'
 import '../../../App.css'
 
 const initialForm = {
+  rollNo: '',
+  codeNo: '',
+  formNo: '131',
   name: '',
+  aadhaarNo: '',
+  age: '',
+  permanentAddress: '',
+  residentialAddress: '',
+  schoolName: '',
+  schoolClass: '',
+  schoolHour: '',
+  tuitionHour: '',
+  preferredTime: 'Morning',
+  guardianName: '',
+  guardianAadhaarNo: '',
+  guardianProfession: '',
+  preferredCourseClass: '',
   fatherName: '',
   motherName: '',
   dateOfBirth: '',
@@ -49,7 +65,10 @@ function Students() {
   }
 
   function handleChange(event) {
-    const { name, value } = event.target
+    const { name } = event.target
+    const value = name === 'name'
+      ? event.target.value.toUpperCase()
+      : event.target.value
 
     setFormData((previous) => ({
       ...previous,
@@ -72,7 +91,23 @@ function Students() {
 
   function openEditForm(student) {
     setFormData({
+      rollNo: student.rollNo || '',
+      codeNo: student.codeNo || '',
+      formNo: student.formNo || '131',
       name: student.name || '',
+      aadhaarNo: student.aadhaarNo || '',
+      age: student.age ?? '',
+      permanentAddress: student.permanentAddress || student.address || '',
+      residentialAddress: student.residentialAddress || '',
+      schoolName: student.schoolName || '',
+      schoolClass: student.schoolClass || '',
+      schoolHour: student.schoolHour || '',
+      tuitionHour: student.tuitionHour || '',
+      preferredTime: formatClassTime(student.preferredTime || student.classTime) || 'Morning',
+      guardianName: student.guardianName || student.fatherName || '',
+      guardianAadhaarNo: student.guardianAadhaarNo || '',
+      guardianProfession: student.guardianProfession || '',
+      preferredCourseClass: student.preferredCourseClass || '',
       fatherName: student.fatherName || '',
       motherName: student.motherName || '',
       dateOfBirth: student.dateOfBirth
@@ -123,6 +158,10 @@ function Students() {
       Object.entries(formData).forEach(([key, value]) => {
         body.append(key, value)
       })
+      body.set('classTime', formData.preferredTime)
+      body.set('whatsappNumber', formData.whatsappNumber || formData.phone)
+      body.set('fatherName', formData.guardianName)
+      body.set('age', formData.age)
 
       if (photo) {
         body.append('photo', photo)
@@ -185,6 +224,8 @@ function Students() {
 
     const matchesSearch = [
       student.name,
+      student.rollNo,
+      student.guardianName,
       student.fatherName,
       student.phone,
     ].some((value) =>
@@ -339,212 +380,79 @@ function Students() {
 
             <form onSubmit={handleSubmit}>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                <div>
-                  <label htmlFor="name" className="text-sm text-white/75">
-                    Student Name *
-                  </label>
+                {[
+                  { name: 'rollNo', label: 'Roll No.', placeholder: 'Student roll number' },
+                  { name: 'admissionDate', label: 'Date *', type: 'date', required: true },
+                  { name: 'codeNo', label: 'Code No.', placeholder: 'Institution code' },
+                  { name: 'formNo', label: 'Form No.', placeholder: '131', required: true },
+                  { name: 'name', label: "Student's Name *", placeholder: 'FULL NAME IN CAPITAL LETTERS', required: true, uppercase: true },
+                  { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
+                  { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
+                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
+                  { name: 'schoolName', label: 'Name of the School', placeholder: 'School name (if applicable)' },
+                  { name: 'schoolClass', label: 'Class', placeholder: 'School class' },
+                  { name: 'schoolHour', label: 'School Hour', placeholder: 'School timing' },
+                  { name: 'tuitionHour', label: 'Tuition Hour', placeholder: 'Tuition timing' },
+                  { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', maxLength: 10, required: true },
+                  { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
+                  { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
+                  { name: 'guardianProfession', label: "Guardian's Professional", placeholder: 'Business, Job, Farmer, etc.' },
+                  { name: 'preferredCourseClass', label: 'Preferred Course/Class', placeholder: 'Course or class at Maktab' },
+                ].map((field) => (
+                  <div key={field.name}>
+                    <label htmlFor={field.name} className="text-sm text-white/75">
+                      {field.label}
+                    </label>
+                    <input
+                      id={field.name}
+                      name={field.name}
+                      type={field.type || 'text'}
+                      value={formData[field.name]}
+                      onChange={handleChange}
+                      className={`${inputClass} ${field.uppercase ? 'uppercase' : ''}`}
+                      placeholder={field.placeholder}
+                      required={field.required}
+                      inputMode={field.inputMode}
+                      pattern={field.pattern}
+                      minLength={field.minLength}
+                      maxLength={field.maxLength}
+                      min={field.min}
+                      max={field.max}
+                    />
+                  </div>
+                ))}
 
+                <div>
+                  <label htmlFor="preferredTime" className="text-sm text-white/75">
+                    Preferred Time *
+                  </label>
                   <input
-                    id="name"
-                    name="name"
-                    value={formData.name}
+                    id="preferredTime"
+                    name="preferredTime"
+                    value={formData.preferredTime}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="Enter student name"
+                    placeholder="e.g. After Asr / 4:00 PM"
                     required
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="fatherName"
-                    className="text-sm text-white/75"
-                  >
-                    Father Name
-                  </label>
-
-                  <input
-                    id="fatherName"
-                    name="fatherName"
-                    value={formData.fatherName}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter father name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="motherName"
-                    className="text-sm text-white/75"
-                  >
-                    Mother Name
-                  </label>
-
-                  <input
-                    id="motherName"
-                    name="motherName"
-                    value={formData.motherName}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter mother name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="dateOfBirth"
-                    className="text-sm text-white/75"
-                  >
-                    Date of Birth
-                  </label>
-
-                  <input
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                    className={inputClass}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="gender" className="text-sm text-white/75">
-                    Gender *
-                  </label>
-
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className={inputClass}
-                    required
-                  >
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="phone" className="text-sm text-white/75">
-                    Phone Number *
-                  </label>
-
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter phone number"
-                    pattern="[0-9]{10}"
-                    maxLength={10}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="whatsappNumber"
-                    className="text-sm text-white/75"
-                  >
-                    WhatsApp Number *
-                  </label>
-
-                  <input
-                    id="whatsappNumber"
-                    name="whatsappNumber"
-                    type="tel"
-                    value={formData.whatsappNumber}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter WhatsApp number"
-                    pattern="[0-9]{10}"
-                    maxLength={10}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="admissionDate"
-                    className="text-sm text-white/75"
-                  >
-                    Admission Date *
-                  </label>
-
-                  <input
-                    id="admissionDate"
-                    name="admissionDate"
-                    type="date"
-                    value={formData.admissionDate}
-                    onChange={handleChange}
-                    className={inputClass}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="classTime"
-                    className="text-sm text-white/75"
-                  >
-                    Class Time *
-                  </label>
-
-                  <select
-                    id="classTime"
-                    name="classTime"
-                    value={formData.classTime}
-                    onChange={handleChange}
-                    className={inputClass}
-                    required
-                  >
-                    <option value="morning">Morning</option>
-                    <option value="after_asr">After Asr</option>
-                    <option value="after_maghrib">After Maghrib</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor="status" className="text-sm text-white/75">
-                    Status *
-                  </label>
-
-                  <select
-                    id="status"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className={inputClass}
-                    required
-                  >
+                  <label htmlFor="status" className="text-sm text-white/75">Status *</label>
+                  <select id="status" name="status" value={formData.status} onChange={handleChange} className={inputClass} required>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                   </select>
                 </div>
 
                 <div className="sm:col-span-2 lg:col-span-3">
-                  <label
-                    htmlFor="address"
-                    className="text-sm text-white/75"
-                  >
-                    Address
-                  </label>
+                  <label htmlFor="permanentAddress" className="text-sm text-white/75">Permanent Full Address</label>
+                  <textarea id="permanentAddress" name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} className={inputClass} placeholder="Permanent home address" rows={2} />
+                </div>
 
-                  <textarea
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className={inputClass}
-                    placeholder="Enter full address"
-                    rows={3}
-                  />
+                <div className="sm:col-span-2 lg:col-span-3">
+                  <label htmlFor="residentialAddress" className="text-sm text-white/75">Residential Full Address</label>
+                  <textarea id="residentialAddress" name="residentialAddress" value={formData.residentialAddress} onChange={handleChange} className={inputClass} placeholder="Current residential address" rows={2} />
                 </div>
 
                 <div className="sm:col-span-2 lg:col-span-3">
@@ -661,10 +569,10 @@ function Students() {
                 <thead className="bg-white/3 text-xs uppercase tracking-wider text-white/45">
                   <tr>
                     <th className="px-6 py-4 font-medium">Student</th>
-                    <th className="px-6 py-4 font-medium">Father Name</th>
+                    <th className="px-6 py-4 font-medium">Guardian Name</th>
                     <th className="px-6 py-4 font-medium">Phone</th>
                     <th className="px-6 py-4 font-medium">WhatsApp</th>
-                    <th className="px-6 py-4 font-medium">Class Time</th>
+                    <th className="px-6 py-4 font-medium">Preferred Time</th>
                     <th className="px-6 py-4 font-medium">Admission Date</th>
                     <th className="px-6 py-4 font-medium">Status</th>
                     <th className="px-6 py-4 font-medium">Actions</th>
@@ -697,14 +605,14 @@ function Students() {
                             </p>
 
                             <p className="mt-1 text-xs text-white/40">
-                              {student.gender || '—'}
+                              Roll No.: {student.rollNo || '—'}
                             </p>
                           </div>
                         </div>
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {student.fatherName || '—'}
+                        {student.guardianName || student.fatherName || '—'}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
@@ -716,7 +624,7 @@ function Students() {
                       </td>
 
                       <td className="px-6 py-4 text-white/65">
-                        {formatClassTime(student.classTime)}
+                        {formatClassTime(student.preferredTime || student.classTime)}
                       </td>
 
                       <td className="px-6 py-4 text-white/65">

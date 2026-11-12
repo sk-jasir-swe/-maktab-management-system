@@ -2,6 +2,22 @@ const mongoose = require("mongoose");
 
 const studentSchema = new mongoose.Schema(
     {
+        rollNo: {
+            type: String,
+            trim: true
+        },
+
+        codeNo: {
+            type: String,
+            trim: true
+        },
+
+        formNo: {
+            type: String,
+            trim: true,
+            default: "131"
+        },
+
         name: {
             type: String,
             required: true,
@@ -10,8 +26,33 @@ const studentSchema = new mongoose.Schema(
 
         fatherName: {
             type: String,
-            required: true,
             trim: true
+        },
+
+        guardianName: {
+            type: String,
+            trim: true
+        },
+
+        aadhaarNo: {
+            type: String,
+            trim: true
+        },
+
+        guardianAadhaarNo: {
+            type: String,
+            trim: true
+        },
+
+        guardianProfession: {
+            type: String,
+            trim: true
+        },
+
+        age: {
+            type: Number,
+            min: 0,
+            max: 120
         },
 
         motherName: {
@@ -48,6 +89,46 @@ const studentSchema = new mongoose.Schema(
             trim: true
         },
 
+        permanentAddress: {
+            type: String,
+            trim: true
+        },
+
+        residentialAddress: {
+            type: String,
+            trim: true
+        },
+
+        schoolName: {
+            type: String,
+            trim: true
+        },
+
+        schoolClass: {
+            type: String,
+            trim: true
+        },
+
+        schoolHour: {
+            type: String,
+            trim: true
+        },
+
+        tuitionHour: {
+            type: String,
+            trim: true
+        },
+
+        preferredTime: {
+            type: String,
+            trim: true
+        },
+
+        preferredCourseClass: {
+            type: String,
+            trim: true
+        },
+
         photo: {
             url: {
                 type: String
@@ -64,7 +145,6 @@ const studentSchema = new mongoose.Schema(
 
         classTime: {
             type: String,
-            enum: ["morning", "after_asr", "after_maghrib"],
             required: true
         },
 

@@ -9,12 +9,29 @@ const {
 async function createStudent(req, res) {
     try {
         const {
+            rollNo,
+            codeNo,
+            formNo,
             name,
             fatherName,
+            guardianName,
             motherName,
+            aadhaarNo,
+            guardianAadhaarNo,
+            guardianProfession,
+            age,
             dateOfBirth,
             gender,
             phone,
+            whatsappNumber,
+            permanentAddress,
+            residentialAddress,
+            schoolName,
+            schoolClass,
+            schoolHour,
+            tuitionHour,
+            preferredTime,
+            preferredCourseClass,
             address,
             admissionDate,
             classTime,
@@ -38,16 +55,33 @@ async function createStudent(req, res) {
         }
 
         const student = await Student.create({
+            rollNo,
+            codeNo,
+            formNo,
             name,
-            fatherName,
+            fatherName: guardianName || fatherName,
+            guardianName: guardianName || fatherName,
             motherName,
+            aadhaarNo,
+            guardianAadhaarNo,
+            guardianProfession,
+            age: age === "" ? undefined : age,
             dateOfBirth,
             gender: gender ? gender.toLowerCase() : gender,
             phone,
-            address,
+            whatsappNumber,
+            permanentAddress: permanentAddress || address,
+            residentialAddress,
+            schoolName,
+            schoolClass,
+            schoolHour,
+            tuitionHour,
+            preferredTime: preferredTime || classTime,
+            preferredCourseClass,
+            address: permanentAddress || address,
             photo,
             admissionDate,
-            classTime: classTime ? classTime.toLowerCase() : classTime,
+            classTime: (preferredTime || classTime)?.toLowerCase(),
             status: status ? status.toLowerCase() : status
         });
 
@@ -116,12 +150,29 @@ async function getStudentById(req, res) {
 async function updateStudent(req, res) {
     try {
         const {
+            rollNo,
+            codeNo,
+            formNo,
             name,
             fatherName,
+            guardianName,
             motherName,
+            aadhaarNo,
+            guardianAadhaarNo,
+            guardianProfession,
+            age,
             dateOfBirth,
             gender,
             phone,
+            whatsappNumber,
+            permanentAddress,
+            residentialAddress,
+            schoolName,
+            schoolClass,
+            schoolHour,
+            tuitionHour,
+            preferredTime,
+            preferredCourseClass,
             address,
             admissionDate,
             classTime,
@@ -167,8 +218,19 @@ async function updateStudent(req, res) {
         }
 
         if (name !== undefined) updateData.name = name;
+        if (rollNo !== undefined) updateData.rollNo = rollNo;
+        if (codeNo !== undefined) updateData.codeNo = codeNo;
+        if (formNo !== undefined) updateData.formNo = formNo;
         if (fatherName !== undefined) updateData.fatherName = fatherName;
+        if (guardianName !== undefined) {
+            updateData.guardianName = guardianName;
+            updateData.fatherName = guardianName;
+        }
         if (motherName !== undefined) updateData.motherName = motherName;
+        if (aadhaarNo !== undefined) updateData.aadhaarNo = aadhaarNo;
+        if (guardianAadhaarNo !== undefined) updateData.guardianAadhaarNo = guardianAadhaarNo;
+        if (guardianProfession !== undefined) updateData.guardianProfession = guardianProfession;
+        if (age !== undefined) updateData.age = age === "" ? null : age;
         if (dateOfBirth !== undefined) updateData.dateOfBirth = dateOfBirth;
 
         if (gender !== undefined) {
@@ -176,7 +238,22 @@ async function updateStudent(req, res) {
         }
 
         if (phone !== undefined) updateData.phone = phone;
+        if (whatsappNumber !== undefined) updateData.whatsappNumber = whatsappNumber;
         if (address !== undefined) updateData.address = address;
+        if (permanentAddress !== undefined) {
+            updateData.permanentAddress = permanentAddress;
+            updateData.address = permanentAddress;
+        }
+        if (residentialAddress !== undefined) updateData.residentialAddress = residentialAddress;
+        if (schoolName !== undefined) updateData.schoolName = schoolName;
+        if (schoolClass !== undefined) updateData.schoolClass = schoolClass;
+        if (schoolHour !== undefined) updateData.schoolHour = schoolHour;
+        if (tuitionHour !== undefined) updateData.tuitionHour = tuitionHour;
+        if (preferredTime !== undefined) {
+            updateData.preferredTime = preferredTime;
+            updateData.classTime = preferredTime.toLowerCase();
+        }
+        if (preferredCourseClass !== undefined) updateData.preferredCourseClass = preferredCourseClass;
 
         if (admissionDate !== undefined) {
             updateData.admissionDate = admissionDate;

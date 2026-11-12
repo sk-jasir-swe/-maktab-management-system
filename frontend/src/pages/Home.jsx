@@ -117,15 +117,13 @@ function Home() {
   const institutionAddress =
     'Mukundapur (Paschim Basti), Masjid-e-Siddiq, Sagareswar, Ramnagar, Purba Medinipur, West Bengal 721446'
   const contactNumbers = ['9002569862', '8348565184']
-  const mapSearch = `${institutionName}, ${institutionAddress}`
-
   const googleMapsUrl = 'https://maps.app.goo.gl/wzYfHRiBjwvhr79x8'
 
   const embeddedMapUrl =
-    `https://maps.google.com/maps?q=${encodeURIComponent(googleMapsUrl)}&output=embed`
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2014.3297675411652!2d87.48284950668805!3d21.668572220308068!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1cd3a13294491f%3A0x9b9e54e03045ad91!2sMasjid%20e%20Siddiqui!5e1!3m2!1sen!2sin!4v1794497821232!5m2!1sen!2sin'
 
   const appleMapsUrl =
-    `https://maps.apple.com/?q=${encodeURIComponent(mapSearch)}`
+    'https://maps.apple.com/?ll=21.668572220308068,87.48284950668805&q=Masjid%20e%20Siddiqui'
 
   return (
     <div className="min-h-screen overflow-x-clip bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed text-white">

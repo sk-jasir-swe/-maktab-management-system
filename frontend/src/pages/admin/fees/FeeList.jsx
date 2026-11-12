@@ -14,6 +14,11 @@ const initialForm = {
   note: '',
 }
 
+const FEE_CLASS_OPTIONS = [
+  'Primary', '00', '01', '02', '03', '04', '05', 'Advance',
+  '06', '07', '08', '09', '10', 'Balegan',
+]
+
 const inputClass =
   'w-full rounded-xl border border-cyan-100/15 bg-[#111935] px-4 py-3 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/10'
 
@@ -59,6 +64,11 @@ function FeePayments() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [typeFilter, setTypeFilter] = useState('all')
+  const [monthlyFeeAmounts, setMonthlyFeeAmounts] = useState(() =>
+    Object.fromEntries(FEE_CLASS_OPTIONS.map((className) => [className, ''])),
+  )
+  const [showFeeSettings, setShowFeeSettings] = useState(false)
+  const [savingFeeSettings, setSavingFeeSettings] = useState(false)
 
   // Date range filter
   const [fromDate, setFromDate] = useState(() => getDefaultDateRange().from)
@@ -75,13 +85,22 @@ function FeePayments() {
     setError('')
 
     try {
-      const [paymentResponse, studentResponse] = await Promise.all([
+      const [paymentResponse, studentResponse, settingsResponse] = await Promise.all([
         apiRequest('/fee-payments'),
         apiRequest('/students'),
+        apiRequest('/fee-payments/monthly-fee-settings'),
       ])
 
       setPayments(paymentResponse.feePayments || [])
       setStudents(studentResponse.students || [])
+      setMonthlyFeeAmounts(Object.fromEntries(
+        FEE_CLASS_OPTIONS.map((className) => {
+          const configuredAmount = settingsResponse.classAmounts?.find(
+            (item) => item.className === className,
+          )?.amount
+          return [className, configuredAmount == null ? '' : String(configuredAmount)]
+        }),
+      ))
     } catch (err) {
       setError(err.message || 'Failed to load fee payments')
     } finally {
@@ -109,6 +128,44 @@ function FeePayments() {
     setShowForm(true)
     setError('')
     setSuccess('')
+  }
+
+  function handleFeeAmountChange(className, value) {
+    setMonthlyFeeAmounts((previous) => ({
+      ...previous,
+      [className]: value,
+    }))
+  }
+
+  async function saveMonthlyFeeSettings(event) {
+    event.preventDefault()
+    setSavingFeeSettings(true)
+    setError('')
+    setSuccess('')
+
+    try {
+      const classAmounts = FEE_CLASS_OPTIONS.map((className) => ({
+        className,
+        amount: Number(monthlyFeeAmounts[className] || 0),
+      }))
+
+      const response = await apiRequest('/fee-payments/monthly-fee-settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ classAmounts }),
+      })
+
+      setMonthlyFeeAmounts(Object.fromEntries(
+        response.classAmounts.map(({ className, amount }) => [className, String(amount)]),
+      ))
+      setShowFeeSettings(false)
+      setSuccess('Class-wise monthly fee amounts saved successfully.')
+      await loadData()
+    } catch (err) {
+      setError(err.message || 'Unable to save monthly fee settings.')
+    } finally {
+      setSavingFeeSettings(false)
+    }
   }
 
   function openEditForm(payment) {
@@ -348,13 +405,22 @@ function FeePayments() {
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={openAddForm}
-            className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg shadow-cyan-950/30 transition hover:bg-[#38e6b7]"
-          >
-            + Record Fee Payment
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setShowFeeSettings((open) => !open)}
+              className="rounded-xl border border-cyan-300/25 bg-cyan-300/10 px-5 py-3 font-semibold text-cyan-200 transition hover:bg-cyan-300/15"
+            >
+              ⚙ Class-wise Fee Settings
+            </button>
+            <button
+              type="button"
+              onClick={openAddForm}
+              className="rounded-xl bg-[#00d5a0] px-5 py-3 font-semibold text-[#06251a] shadow-lg shadow-cyan-950/30 transition hover:bg-[#38e6b7]"
+            >
+              + Record Fee Payment
+            </button>
+          </div>
         </header>
 
         {/* Alerts */}
@@ -368,6 +434,57 @@ function FeePayments() {
           <div className="mb-5 rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-200">
             {success}
           </div>
+        )}
+
+        {showFeeSettings && (
+          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+            <div className="mb-6">
+              <h2 className="text-xl font-bold text-white">Class-wise Monthly Fee</h2>
+              <p className="mt-2 text-sm leading-6 text-gray-400">
+                Set the default fee for each class. Current-month pending records use this amount; if an admin edits a record, that amount stays as entered.
+              </p>
+            </div>
+
+            <form onSubmit={saveMonthlyFeeSettings}>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {FEE_CLASS_OPTIONS.map((className) => (
+                  <label key={className} className="block text-sm font-medium text-gray-300">
+                    {className === 'Primary' || className === 'Advance' || className === 'Balegan'
+                      ? className
+                      : `Class ${className}`}
+                    <div className="mt-2 flex items-center rounded-xl border border-cyan-100/15 bg-[#111935] px-3 focus-within:border-cyan-400/60">
+                      <span className="text-gray-400">₹</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={monthlyFeeAmounts[className]}
+                        onChange={(event) => handleFeeAmountChange(className, event.target.value)}
+                        placeholder="0"
+                        className="w-full bg-transparent px-2 py-3 text-white outline-none"
+                      />
+                    </div>
+                  </label>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="submit"
+                  disabled={savingFeeSettings}
+                  className="rounded-xl bg-[#00d5a0] px-6 py-3 font-semibold text-[#06251a] transition hover:bg-[#38e6b7] disabled:opacity-60"
+                >
+                  {savingFeeSettings ? 'Saving...' : 'Save Class Fees'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowFeeSettings(false)}
+                  className="rounded-xl border border-white/10 px-6 py-3 font-semibold text-gray-300 transition hover:bg-white/5"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </section>
         )}
 
         {/* Statistics */}

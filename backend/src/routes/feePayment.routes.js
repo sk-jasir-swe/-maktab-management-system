@@ -6,6 +6,18 @@ const validateObjectId = require("../middleware/validateObjectId.middleware");
 
 const router = express.Router();
 
+router.get(
+    "/monthly-fee-settings",
+    authenticateAdmin,
+    feePaymentController.getMonthlyFeeSettings
+);
+
+router.put(
+    "/monthly-fee-settings",
+    authenticateAdmin,
+    feePaymentController.updateMonthlyFeeSettings
+);
+
 router.post(
     "/",
     authenticateAdmin,

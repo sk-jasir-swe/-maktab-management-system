@@ -120,6 +120,8 @@ function Home() {
     'Mukundapur (Paschim Basti), Masjid-e-Siddiq, Sagareswar, Ramnagar, Purba Medinipur, West Bengal 721446'
   const contactNumbers = ['9002569862', '8348565184']
   const googleMapsUrl = 'https://maps.app.goo.gl/wzYfHRiBjwvhr79x8'
+  const desktopNavItemClass =
+    'whitespace-nowrap rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-white/75 transition hover:border-cyan-300/40 hover:bg-cyan-300/10 hover:text-cyan-200 xl:px-3.5'
 
   const embeddedMapUrl =
     'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2014.3297675411652!2d87.48284950668805!3d21.668572220308068!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a1cd3a13294491f%3A0x9b9e54e03045ad91!2sMasjid%20e%20Siddiqui!5e1!3m2!1sen!2sin!4v1794497821232!5m2!1sen!2sin'
@@ -181,9 +183,9 @@ function Home() {
       </div>
 
       {/* Navbar */}
-      <header className="sticky top-4 z-30 mx-auto mt-5 w-[calc(100%-2rem)] max-w-6xl rounded-full border border-white/20 bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl">
-        <nav className="flex items-center justify-between px-5 py-3 sm:px-6">
-          <a href="#home" className="flex items-center gap-3">
+      <header className="sticky top-4 z-30 mx-auto mt-5 w-[calc(100%-2rem)] max-w-7xl rounded-3xl border border-white/20 bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl">
+        <nav className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
+          <a href="#home" className="flex min-w-0 items-center gap-3 lg:w-56 xl:w-64">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/30 bg-violet-400/10 text-2xl text-cyan-300">
               ☪
             </div>
@@ -199,43 +201,43 @@ function Home() {
             </div>
           </a>
 
-          <div className="hidden items-center gap-8 text-sm text-white/70 lg:flex">
-            <a href="#home" className="transition hover:text-cyan-300">
+          <div className="hidden flex-1 flex-wrap items-center justify-end gap-2 lg:flex">
+            <a href="#home" className={desktopNavItemClass}>
               Home
             </a>
 
-            <a href="#about" className="transition hover:text-cyan-300">
+            <a href="#about" className={desktopNavItemClass}>
               About
             </a>
 
-            <Link to="/rules" className="transition hover:text-cyan-300">
+            <Link to="/rules" className={desktopNavItemClass}>
               Rules &amp; Regulations
             </Link>
 
-            <a href="#education" className="transition hover:text-cyan-300">
+            <a href="#education" className={desktopNavItemClass}>
               Education
             </a>
 
-            <a href="#teachers" className="transition hover:text-cyan-300">
+            <a href="#teachers" className={desktopNavItemClass}>
               Teachers
             </a>
 
-            <a href="#gallery" className="transition hover:text-cyan-300">
+            <a href="#gallery" className={desktopNavItemClass}>
               Memories
             </a>
 
-            <a href="#notices" className="transition hover:text-cyan-300">
+            <a href="#notices" className={desktopNavItemClass}>
               Notices
             </a>
 
-            <a href="#contact" className="transition hover:text-cyan-300">
+            <a href="#contact" className={desktopNavItemClass}>
               Contact
             </a>
 
             {/* NEW: Check Status */}
             <Link
               to="/admission-status"
-              className="rounded-full bg-cyan-400 px-4 py-2 font-semibold text-[#0b1026] transition hover:bg-cyan-300"
+              className="whitespace-nowrap rounded-full border border-cyan-200/50 bg-cyan-300 px-4 py-2 text-xs font-bold text-[#0b1026] shadow-lg shadow-cyan-500/15 transition hover:-translate-y-0.5 hover:bg-cyan-200"
             >
               Check Status
             </Link>

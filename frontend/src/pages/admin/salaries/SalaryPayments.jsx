@@ -95,6 +95,9 @@ function SalaryPayments() {
     setForm((previous) => ({
       ...previous,
       [name]: value,
+      ...(name === 'status' && value === 'paid'
+        ? { paymentDate: new Date().toISOString().slice(0, 10) }
+        : {}),
     }))
   }
 
@@ -551,7 +554,7 @@ function SalaryPayments() {
                   />
                 </FormField>
 
-                <FormField label="Salary Month">
+                <FormField label="Salary Due Month">
                   <input
                     type="month"
                     name="month"
@@ -752,7 +755,7 @@ function SalaryPayments() {
                   <tr>
                     <th className="px-5 py-4">Teacher</th>
                     <th className="px-5 py-4">Subject</th>
-                    <th className="px-5 py-4">Salary Month</th>
+                    <th className="px-5 py-4">Salary Due Month</th>
                     <th className="px-5 py-4">Amount</th>
                     <th className="px-5 py-4">Payment Date</th>
                     <th className="px-5 py-4">Method</th>

@@ -115,6 +115,9 @@ function FeePayments() {
       ...previous,
       [name]: value,
       ...(name === 'feeType' && value === 'monthly' ? { student: '' } : {}),
+      ...(name === 'status' && value === 'paid'
+        ? { paymentDate: new Date().toISOString().slice(0, 10) }
+        : {}),
     }))
   }
 

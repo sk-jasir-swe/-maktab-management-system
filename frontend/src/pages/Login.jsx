@@ -71,7 +71,7 @@ function AdminLogin() {
           </div>
 
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
-            Al-Noor Maktab
+            Siddiqua Deeniyat Munazzam Maktab
           </p>
 
           <h1 className="mt-3 text-3xl font-bold">

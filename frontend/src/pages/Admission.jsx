@@ -364,7 +364,7 @@ function Admission() {
         )}
 
         <p className="mt-6 text-center text-xs text-white/35">
-          © {new Date().getFullYear()} Al-Noor Maktab
+          © {new Date().getFullYear()} Siddiqua Deeniyat Munazzam Maktab
         </p>
       </div>
     </div>

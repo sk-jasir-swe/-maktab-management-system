@@ -537,7 +537,7 @@ function Reports() {
         </section>
 
         <footer className="mt-8 text-center text-xs text-white/30">
-          Al-Noor Maktab Management System
+          Siddiqua Deeniyat Munazzam Maktab Management System
         </footer>
       </main>
     </div>

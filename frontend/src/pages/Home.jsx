@@ -113,7 +113,11 @@ function Home() {
     }
   }, [])
 
-  const mapSearch = 'Al-Noor Maktab'
+  const institutionName = 'Siddiqua Deeniyat Munazzam Maktab'
+  const institutionAddress =
+    'Mukundapur (Paschim Basti), Masjid-e-Siddiq, Sagareswar, Ramnagar, Purba Medinipur, West Bengal 721446'
+  const contactNumbers = ['9002569862', '8348565184']
+  const mapSearch = `${institutionName}, ${institutionAddress}`
 
   const googleMapsUrl =
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapSearch)}`
@@ -187,7 +191,7 @@ function Home() {
 
             <div>
               <h1 className="text-lg font-bold tracking-wide">
-                Al-Noor Maktab
+                Siddiqua Deeniyat Munazzam Maktab
               </h1>
 
               <p className="text-xs text-cyan-200/60">
@@ -805,7 +809,7 @@ function Home() {
                 <ContactItem
                   icon="📍"
                   title="Our Location"
-                  description="Al-Noor Maktab"
+                  description={institutionAddress}
                 >
                   <a
                     href={googleMapsUrl}
@@ -820,14 +824,20 @@ function Home() {
                 <ContactItem
                   icon="📞"
                   title="Phone Number"
-                  description="Contact number will be added here."
-                />
-
-                <ContactItem
-                  icon="✉️"
-                  title="Email Address"
-                  description="Email address will be added here."
-                />
+                  description="Call either number:"
+                >
+                  <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
+                    {contactNumbers.map((number) => (
+                      <a
+                        key={number}
+                        href={`tel:${number}`}
+                        className="text-cyan-300 hover:text-white"
+                      >
+                        {number}
+                      </a>
+                    ))}
+                  </div>
+                </ContactItem>
               </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
@@ -868,7 +878,7 @@ function Home() {
               </div>
 
               <iframe
-                title="Al-Noor Maktab Google Map"
+                title="Siddiqua Deeniyat Munazzam Maktab Google Map"
                 src={embeddedMapUrl}
                 width="100%"
                 height="390"
@@ -939,7 +949,7 @@ function Home() {
       <footer className="relative z-10 border-t border-white/20 px-6 py-7">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-3 text-sm text-white/40 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} Al-Noor Maktab. All rights reserved.
+            © {new Date().getFullYear()} Siddiqua Deeniyat Munazzam Maktab. All rights reserved.
           </p>
 
           <p>Knowledge • Faith • Values</p>

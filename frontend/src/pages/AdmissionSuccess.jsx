@@ -70,7 +70,7 @@ function AdmissionSuccess() {
         </div>
 
         <p className="mt-8 text-xs text-white/35">
-          Al-Noor Maktab • Knowledge • Faith • Values
+          Siddiqua Deeniyat Munazzam Maktab • Knowledge • Faith • Values
         </p>
       </div>
     </div>

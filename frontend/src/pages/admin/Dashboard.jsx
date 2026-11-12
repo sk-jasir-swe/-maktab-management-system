@@ -266,7 +266,7 @@ function AdminDashboard() {
 
               <div>
                 <h1 className="text-lg font-bold sm:text-xl">
-                  Al-Noor Maktab
+                  Siddiqua Deeniyat Munazzam Maktab
                 </h1>
 
                 <p className="text-xs text-white/45">
@@ -412,7 +412,7 @@ function AdminDashboard() {
 
           {/* Footer */}
           <footer className="mt-14 border-t border-white/10 pt-6 text-center text-sm text-white/35">
-            Al-Noor Maktab Management System
+            Siddiqua Deeniyat Munazzam Maktab Management System
           </footer>
 
         </main>

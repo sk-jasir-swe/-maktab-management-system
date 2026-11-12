@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../services/api'
 import '../App.css'
+import InstitutionLogo from '../components/InstitutionLogo'
 
 const initialFormData = {
   studentName: '',
@@ -223,9 +224,7 @@ function Admission() {
           /* Admission form */
           <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-10">
             <div className="mb-8">
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-2xl text-cyan-300">
-                ☪
-              </div>
+              <InstitutionLogo className="mb-5 h-16 w-16 rounded-2xl" />
 
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
                 Join Our Maktab

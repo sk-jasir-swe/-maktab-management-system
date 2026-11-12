@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import InstitutionLogo from '../components/InstitutionLogo'
 
 const sections = [
   {
@@ -84,6 +85,7 @@ function Rules() {
           ← হোমে ফিরে যান
         </Link>
         <header className="my-8 border-b border-white/10 pb-7 text-center">
+          <InstitutionLogo className="mx-auto mb-5 h-16 w-16 rounded-2xl" />
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300">
             সিদ্দিকা দ্বীনিয়াত মুনাযযাম মক্তব
           </p>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { apiRequest } from '../services/api'
 import '../App.css'
+import InstitutionLogo from '../components/InstitutionLogo'
 
 function AdminLogin() {
   const [formData, setFormData] = useState({
@@ -66,9 +67,7 @@ function AdminLogin() {
       <div className="relative z-10 w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-7 shadow-2xl shadow-black/20 backdrop-blur-2xl sm:p-10">
         {/* Logo */}
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-3xl text-cyan-300">
-            ☪
-          </div>
+          <InstitutionLogo className="mx-auto h-16 w-16 rounded-2xl" />
 
           <p className="mt-6 text-sm font-semibold uppercase tracking-[0.25em] text-cyan-300">
             Siddiqua Deeniyat Munazzam Maktab

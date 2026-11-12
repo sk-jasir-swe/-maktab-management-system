@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { apiRequest } from '../../services/api'
 import { resetAdminVerification } from '../../services/adminAuth'
 import '../../App.css'
+import InstitutionLogo from '../../components/InstitutionLogo'
 
 function AdminDashboard() {
   const navigate = useNavigate()
@@ -260,9 +261,7 @@ function AdminDashboard() {
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
 
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 text-2xl text-cyan-300">
-                ☪
-              </div>
+              <InstitutionLogo className="h-12 w-12 rounded-2xl" />
 
               <div>
                 <h1 className="text-lg font-bold sm:text-xl">

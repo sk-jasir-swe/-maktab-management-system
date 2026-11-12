@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../services/api'
 import '../App.css'
+import InstitutionLogo from '../components/InstitutionLogo'
 
 const GALLERY_IMAGES = [
   {
@@ -186,9 +187,7 @@ function Home() {
       <header className="sticky top-4 z-30 mx-auto mt-5 w-[calc(100%-2rem)] max-w-7xl rounded-3xl border border-white/20 bg-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.25)] backdrop-blur-2xl">
         <nav className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
           <a href="#home" className="flex min-w-0 items-center gap-3 lg:w-56 xl:w-64">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/30 bg-violet-400/10 text-2xl text-cyan-300">
-              ☪
-            </div>
+            <InstitutionLogo className="h-12 w-12 rounded-2xl" />
 
             <div className="min-w-0">
               <h1 className="whitespace-normal text-xs font-bold leading-tight tracking-wide sm:text-sm xl:text-base">
@@ -397,7 +396,7 @@ function Home() {
               <div className="my-8 flex h-56 items-center justify-center rounded-2xl border border-cyan-200/10 bg-gradient-to-br from-cyan-300/10 via-violet-200/5 to-transparent">
                 <div className="text-center">
                   <div className="text-7xl text-cyan-300/80">
-                    ☪
+                    <InstitutionLogo className="h-14 w-14 rounded-2xl" />
                   </div>
 
                   <p className="mt-4 text-sm tracking-[0.3em] text-cyan-100/70">

@@ -26,7 +26,6 @@ const initialForm = {
   dateOfBirth: '',
   phone: '',
   whatsappNumber: '',
-  gender: '',
   address: '',
   admissionDate: '',
   classTime: '',
@@ -223,7 +222,7 @@ function Students() {
       dateOfBirth: student.dateOfBirth
         ? new Date(student.dateOfBirth).toISOString().split('T')[0]
         : '',
-      gender: student.gender || '',
+      gender: student.gender || 'male',
       phone: student.phone || '',
       whatsappNumber: student.whatsappNumber || '',
       address: student.address || '',
@@ -623,7 +622,6 @@ function Students() {
                   { name: 'codeNo', label: 'Code No.', placeholder: 'Institution code' },
                   { name: 'formNo', label: 'Form No.', placeholder: '131', required: true },
                   { name: 'name', label: "Student's Name *", placeholder: 'FULL NAME IN CAPITAL LETTERS', required: true, uppercase: true },
-                  { name: 'motherName', label: "Mother's Name", placeholder: "Enter mother's full name" },
                   { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
                   { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
@@ -659,16 +657,6 @@ function Students() {
                     />
                   </div>
                 ))}
-
-                <div>
-                  <label htmlFor="gender" className="text-sm text-white/75">Gender *</label>
-                  <select id="gender" name="gender" value={formData.gender} onChange={handleChange} className={inputClass} required>
-                    <option value="" disabled>Select gender</option>
-                    <option value="female">Female</option>
-                    <option value="male">Male</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
 
                 <div>
                   <label htmlFor="preferredTime" className="text-sm text-white/75">

@@ -78,8 +78,6 @@ function StudentDetails() {
         ['Code No.', selectedStudent.codeNo],
         ['Form No.', selectedStudent.formNo],
         ['Student Name', selectedStudent.name],
-        ["Mother's Name", selectedStudent.motherName],
-        ['Gender', selectedStudent.gender],
         ['Aadhar No.', selectedStudent.aadhaarNo],
         ['Date of Birth', formatDate(selectedStudent.dateOfBirth)],
         ['Age', selectedStudent.age],

@@ -206,6 +206,10 @@ function Home() {
               About
             </a>
 
+            <Link to="/rules" className="transition hover:text-cyan-300">
+              Rules &amp; Regulations
+            </Link>
+
             <a href="#education" className="transition hover:text-cyan-300">
               Education
             </a>

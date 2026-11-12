@@ -346,6 +346,14 @@ function Admission() {
                 </div>
               </div>
 
+              <p className="mt-7 text-center text-sm leading-6 text-white/55">
+                Please read the{' '}
+                <Link to="/rules" className="font-semibold text-cyan-300 hover:text-cyan-200">
+                  Rules &amp; Regulations
+                </Link>{' '}
+                before submitting the admission application.
+              </p>
+
               {/* Submit button */}
               <button
                 type="submit"

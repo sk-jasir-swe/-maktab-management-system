@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiRequest } from '../../../services/api'
 
@@ -69,6 +69,8 @@ function FeePayments() {
   )
   const [showFeeSettings, setShowFeeSettings] = useState(false)
   const [savingFeeSettings, setSavingFeeSettings] = useState(false)
+  const formSectionRef = useRef(null)
+  const feeSettingsRef = useRef(null)
 
   // Date range filter
   const [fromDate, setFromDate] = useState(() => getDefaultDateRange().from)
@@ -79,6 +81,14 @@ function FeePayments() {
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (showForm) requestAnimationFrame(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showForm])
+
+  useEffect(() => {
+    if (showFeeSettings) requestAnimationFrame(() => feeSettingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showFeeSettings])
 
   async function loadData() {
     setLoading(true)
@@ -440,7 +450,7 @@ function FeePayments() {
         )}
 
         {showFeeSettings && (
-          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+          <section ref={feeSettingsRef} className={`${glassPanel} mb-8 scroll-mt-20 p-5 sm:p-7`}>
             <div className="mb-6">
               <h2 className="text-xl font-bold text-white">Class-wise Monthly Fee</h2>
               <p className="mt-2 text-sm leading-6 text-gray-400">
@@ -519,7 +529,7 @@ function FeePayments() {
 
         {/* Add / Edit Payment Form */}
         {showForm && (
-          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+          <section ref={formSectionRef} className={`${glassPanel} mb-8 scroll-mt-20 p-5 sm:p-7`}>
             <div className="mb-6 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold text-white">

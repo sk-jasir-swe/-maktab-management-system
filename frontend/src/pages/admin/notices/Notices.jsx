@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { apiRequest } from '../../../services/api'
 
@@ -20,10 +20,15 @@ function Notices() {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const formSectionRef = useRef(null)
 
   useEffect(() => {
     fetchNotices()
   }, [])
+
+  useEffect(() => {
+    if (showForm) requestAnimationFrame(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showForm])
 
   async function fetchNotices() {
     try {
@@ -269,7 +274,7 @@ function Notices() {
 
         {/* Create / Edit Form */}
         {showForm && (
-          <section className="mb-8 rounded-2xl border border-cyan-300/20 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
+          <section ref={formSectionRef} className="mb-8 scroll-mt-20 rounded-2xl border border-cyan-300/20 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
             <div className="mb-7 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">

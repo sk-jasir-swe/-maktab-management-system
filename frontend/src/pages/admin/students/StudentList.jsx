@@ -132,6 +132,7 @@ function Students() {
   const [showCropModal, setShowCropModal] = useState(false)
   const cropDragRef = useRef(null)
   const cropPreviewCanvasRef = useRef(null)
+  const formSectionRef = useRef(null)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [editingId, setEditingId] = useState(null)
@@ -144,6 +145,10 @@ function Students() {
   useEffect(() => {
     fetchStudents()
   }, [])
+
+  useEffect(() => {
+    if (showForm) requestAnimationFrame(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showForm])
 
   useEffect(() => () => {
     if (photoPreview) URL.revokeObjectURL(photoPreview)
@@ -654,7 +659,7 @@ function Students() {
 
         {/* Add / Edit Form */}
         {showForm && (
-          <section className="mb-8 rounded-2xl border border-cyan-300/20 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
+          <section ref={formSectionRef} className="mb-8 scroll-mt-20 rounded-2xl border border-cyan-300/20 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
             <div className="mb-7 flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">

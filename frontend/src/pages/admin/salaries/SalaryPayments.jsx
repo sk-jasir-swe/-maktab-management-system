@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { apiRequest } from '../../../services/api'
 
@@ -59,6 +59,8 @@ function SalaryPayments() {
   const [success, setSuccess] = useState('')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const formSectionRef = useRef(null)
+  const salarySettingsRef = useRef(null)
 
   // Date range filter
   const [fromDate, setFromDate] = useState(() => getDefaultDateRange().from)
@@ -69,6 +71,14 @@ function SalaryPayments() {
   useEffect(() => {
     loadData()
   }, [])
+
+  useEffect(() => {
+    if (showForm) requestAnimationFrame(() => formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showForm])
+
+  useEffect(() => {
+    if (showSalarySettings) requestAnimationFrame(() => salarySettingsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showSalarySettings])
 
   async function loadData() {
     setLoading(true)
@@ -404,7 +414,7 @@ function SalaryPayments() {
         )}
 
         {showSalarySettings && (
-          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+          <section ref={salarySettingsRef} className={`${glassPanel} mb-8 scroll-mt-20 p-5 sm:p-7`}>
             <div className="mb-6">
               <h2 className="text-xl font-bold">Set Monthly Teacher Salary</h2>
               <p className="mt-2 text-sm leading-6 text-gray-400">
@@ -488,7 +498,7 @@ function SalaryPayments() {
 
         {/* Add/Edit Form */}
         {showForm && (
-          <section className={`${glassPanel} mb-8 p-5 sm:p-7`}>
+          <section ref={formSectionRef} className={`${glassPanel} mb-8 scroll-mt-20 p-5 sm:p-7`}>
             <div className="mb-6 flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold">

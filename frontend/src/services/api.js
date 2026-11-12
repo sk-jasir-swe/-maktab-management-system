@@ -42,6 +42,7 @@ export async function apiRequest(endpoint, options = {}) {
     endpoint === '/notices' ||
     endpoint === '/admissions' ||
     endpoint === '/admissions/check-status' ||
+    endpoint === '/exam-results/public-lookup' ||
     endpoint.startsWith('/students/public-profile/') ||
     endpoint === '/admin/login' ||
     endpoint === '/admin/refresh'

@@ -13,6 +13,7 @@ import Home from '../pages/Home'
 import Admission from '../pages/Admission'
 import AdmissionSuccess from '../pages/AdmissionSuccess'
 import AdmissionStatus from '../pages/AdmissionStatus'
+import StudentResults from '../pages/StudentResults'
 import Rules from '../pages/Rules'
 
 import AdminLogin from '../pages/Login'
@@ -167,6 +168,11 @@ function App() {
       <Route
         path="/admission-status"
         element={<AdmissionStatus />}
+      />
+
+      <Route
+        path="/student-results"
+        element={<StudentResults />}
       />
 
       <Route

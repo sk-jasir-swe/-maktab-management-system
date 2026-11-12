@@ -111,6 +111,40 @@ async function getExamResults(req, res) {
 
 
 // Get Results of One Student
+async function getPublicStudentResults(req, res) {
+    try {
+        const rollNo = String(req.body.rollNo || "").trim();
+        const phone = String(req.body.phone || "").trim();
+        if (!rollNo || !/^\d{10}$/.test(phone)) {
+            return res.status(400).json({ message: "Enter a roll number and the registered 10-digit phone number." });
+        }
+
+        const student = await Student.findOne({ rollNo, phone })
+            .select("name rollNo preferredCourseClass");
+        if (!student) {
+            return res.status(404).json({ message: "No student matched that roll number and registered phone number." });
+        }
+
+        const examResults = await ExamResult.find({ student: student._id })
+            .populate("exam", "name date")
+            .select("exam subject marks totalMarks grade remarks createdAt")
+            .sort({ createdAt: -1, _id: -1 })
+            .limit(1);
+
+        return res.status(200).json({
+            student: {
+                name: student.name,
+                rollNo: student.rollNo,
+                class: student.preferredCourseClass
+            },
+            examResults
+        });
+    } catch (error) {
+        console.error("Public student result lookup error:", error);
+        return res.status(500).json({ message: "Unable to look up results right now." });
+    }
+}
+
 async function getStudentExamResults(req, res) {
     try {
         const examResults = await ExamResult.find({
@@ -327,6 +361,7 @@ async function deleteExamResult(req, res) {
 module.exports = {
     createExamResult,
     getExamResults,
+    getPublicStudentResults,
     getStudentExamResults,
     getExamResultsByExam,
     getExamResultById,

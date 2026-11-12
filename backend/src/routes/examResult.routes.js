@@ -6,6 +6,8 @@ const validateObjectId = require("../middleware/validateObjectId.middleware");
 
 const router = express.Router();
 
+// Public student result lookup, verified with roll number and registered phone.
+router.post("/public-lookup", examResultController.getPublicStudentResults);
 
 // Create Exam Result
 router.post(

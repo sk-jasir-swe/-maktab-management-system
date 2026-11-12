@@ -240,6 +240,12 @@ function Home() {
             >
               Check Status
             </Link>
+            <Link
+              to="/student-results"
+              className="whitespace-nowrap rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white transition hover:-translate-y-0.5 hover:bg-white/15"
+            >
+              Check Results
+            </Link>
           </div>
 
           <button
@@ -287,6 +293,7 @@ function Home() {
               <a onClick={() => setMobileMenuOpen(false)} href="#notices" className="rounded-xl px-4 py-3 hover:bg-white/10">Notices</a>
               <a onClick={() => setMobileMenuOpen(false)} href="#contact" className="rounded-xl px-4 py-3 hover:bg-white/10">Contact</a>
               <Link onClick={() => setMobileMenuOpen(false)} to="/admission-status" className="mt-3 rounded-xl bg-cyan-400 px-4 py-3 text-center font-semibold text-[#0b1026]">Check Status</Link>
+              <Link onClick={() => setMobileMenuOpen(false)} to="/student-results" className="mt-2 rounded-xl border border-cyan-200/30 bg-cyan-300/10 px-4 py-3 text-center font-semibold text-cyan-100">Check Results</Link>
               <Link onClick={() => setMobileMenuOpen(false)} to="/admission" className="mt-2 rounded-xl border border-white/15 px-4 py-3 text-center font-semibold text-white">Apply for Admission</Link>
             </nav>
           </aside>
@@ -338,6 +345,12 @@ function Home() {
                 className="rounded-xl border border-cyan-300/30 bg-cyan-300/10 px-7 py-3.5 font-semibold text-cyan-200 transition hover:bg-cyan-300/20"
               >
                 Check Admission Status →
+              </Link>
+              <Link
+                to="/student-results"
+                className="rounded-xl border border-white/15 bg-white/[0.08] px-7 py-3.5 font-semibold text-white/90 backdrop-blur-xl transition hover:bg-white/10"
+              >
+                Check Exam Results →
               </Link>
             </div>
 

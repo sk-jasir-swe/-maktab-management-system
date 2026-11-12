@@ -214,10 +214,12 @@ function FeePayments() {
     return payments.filter((payment) => {
       const studentName = payment.student?.name || ''
       const studentPhone = payment.student?.phone || ''
+      const rollNumber = payment.student?.rollNo || ''
 
       const matchesSearch =
         studentName.toLowerCase().includes(search.toLowerCase()) ||
-        studentPhone.includes(search)
+        studentPhone.includes(search) ||
+        rollNumber.toLowerCase().includes(search.toLowerCase())
 
       const matchesStatus =
         statusFilter === 'all' || payment.status === statusFilter
@@ -403,7 +405,7 @@ function FeePayments() {
 
                       {students.map((student) => (
                         <option key={student._id} value={student._id}>
-                          {student.name} — {student.phone}
+                          {student.name} — Roll No. {student.rollNo || 'Not assigned'}
                         </option>
                       ))}
                     </select>
@@ -690,7 +692,7 @@ function FeePayments() {
                         </p>
 
                         <p className="mt-1 text-xs text-gray-500">
-                          {payment.student?.phone || 'No phone'}
+                          Roll No.: {payment.student?.rollNo || 'Not assigned'}
                         </p>
                       </td>
 

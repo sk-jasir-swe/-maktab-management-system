@@ -39,7 +39,7 @@ async function createFeePayment(req, res) {
 
 await feePayment.populate(
     "student",
-    "name fatherName phone"
+    "name fatherName phone rollNo"
 );
 
         return res.status(201).json({
@@ -61,7 +61,7 @@ await feePayment.populate(
 async function getFeePayments(req, res) {
     try {
         const feePayments = await FeePayment.find()
-            .populate("student", "name fatherName phone")
+            .populate("student", "name fatherName phone rollNo")
             .sort({ createdAt: -1 });
 
         return res.status(200).json({
@@ -84,7 +84,7 @@ async function getStudentFeePayments(req, res) {
         const feePayments = await FeePayment.find({
             student: req.params.studentId
         })
-            .populate("student", "name fatherName phone")
+            .populate("student", "name fatherName phone rollNo")
             .sort({ paymentDate: -1 });
 
         return res.status(200).json({
@@ -106,7 +106,7 @@ async function getFeePaymentById(req, res) {
     try {
         const feePayment = await FeePayment.findById(
             req.params.id
-        ).populate("student", "name fatherName phone");
+        ).populate("student", "name fatherName phone rollNo");
 
         if (!feePayment) {
             return res.status(404).json({
@@ -183,7 +183,7 @@ async function updateFeePayment(req, res) {
                 new: true,
                 runValidators: true
             }
-        ).populate("student", "name fatherName phone");
+        ).populate("student", "name fatherName phone rollNo");
 
         if (!feePayment) {
             return res.status(404).json({

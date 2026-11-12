@@ -6,8 +6,10 @@ import '../App.css'
 const initialFormData = {
   studentName: '',
   guardianName: '',
+  motherName: '',
   aadhaarNo: '',
   dateOfBirth: '',
+  gender: '',
   age: '',
   permanentAddress: '',
   residentialAddress: '',
@@ -255,6 +257,7 @@ function Admission() {
               <div className="grid gap-5 sm:grid-cols-2">
                 {[
                   { name: 'studentName', label: "Student's Name *", placeholder: 'Full name in capital letters', required: true, autoComplete: 'name', uppercase: true },
+                  { name: 'motherName', label: "Mother's Name", placeholder: "Enter mother's full name" },
                   { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit student Aadhaar', inputMode: 'numeric', maxLength: 12 },
                   { name: 'dateOfBirth', label: 'Date of Birth *', type: 'date', required: true },
                   { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
@@ -289,6 +292,16 @@ function Admission() {
                     />
                   </div>
                 ))}
+
+                <div>
+                  <label className={labelClass} htmlFor="gender">Gender *</label>
+                  <select className={inputClass} id="gender" name="gender" value={formData.gender} onChange={handleChange} required>
+                    <option value="" disabled>Select gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
 
                 <div>
                   <label className={labelClass} htmlFor="preferredTime">Preferred Time *</label>

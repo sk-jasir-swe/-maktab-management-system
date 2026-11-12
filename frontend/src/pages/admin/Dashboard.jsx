@@ -9,6 +9,7 @@ function AdminDashboard() {
   const navigate = useNavigate()
 
   const [dashboardData, setDashboardData] = useState(null)
+  const [currentTime, setCurrentTime] = useState(() => new Date())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
@@ -51,6 +52,11 @@ function AdminDashboard() {
     return () => {
       active = false
     }
+  }, [])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setCurrentTime(new Date()), 60_000)
+    return () => window.clearInterval(timer)
   }, [])
 
 
@@ -317,6 +323,27 @@ function AdminDashboard() {
               Manage students, teachers, admissions, fee payments,
               examinations and other Maktab activities from one place.
             </p>
+
+            <div className="mt-5 inline-flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
+              <span className="font-semibold text-cyan-200">
+                {new Intl.DateTimeFormat('en-IN', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  timeZone: 'Asia/Kolkata',
+                }).format(currentTime)}
+              </span>
+              <span className="text-white/30" aria-hidden="true">·</span>
+              <time>
+                {new Intl.DateTimeFormat('en-IN', {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true,
+                  timeZone: 'Asia/Kolkata',
+                }).format(currentTime)} IST
+              </time>
+            </div>
           </section>
 
           {/* Loading */}

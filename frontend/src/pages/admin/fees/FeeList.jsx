@@ -20,6 +20,30 @@ const inputClass =
 const glassPanel =
   'rounded-3xl border border-white/[0.10] bg-[#171a3c]/75 shadow-xl shadow-black/10 backdrop-blur-xl'
 
+function getDefaultDateRange() {
+  const end = new Date()
+  const start = new Date(end)
+  const targetDay = end.getDate()
+
+  start.setDate(1)
+  start.setMonth(start.getMonth() - 1)
+  const lastDayOfPreviousMonth = new Date(
+    start.getFullYear(),
+    start.getMonth() + 1,
+    0,
+  ).getDate()
+  start.setDate(Math.min(targetDay, lastDayOfPreviousMonth))
+
+  const toInputDate = (date) => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  return { from: toInputDate(start), to: toInputDate(end) }
+}
+
 function FeePayments() {
   const navigate = useNavigate()
 
@@ -37,10 +61,10 @@ function FeePayments() {
   const [typeFilter, setTypeFilter] = useState('all')
 
   // Date range filter
-  const [fromDate, setFromDate] = useState('')
-  const [toDate, setToDate] = useState('')
-  const [appliedFromDate, setAppliedFromDate] = useState('')
-  const [appliedToDate, setAppliedToDate] = useState('')
+  const [fromDate, setFromDate] = useState(() => getDefaultDateRange().from)
+  const [toDate, setToDate] = useState(() => getDefaultDateRange().to)
+  const [appliedFromDate, setAppliedFromDate] = useState(() => getDefaultDateRange().from)
+  const [appliedToDate, setAppliedToDate] = useState(() => getDefaultDateRange().to)
 
   useEffect(() => {
     loadData()
@@ -121,10 +145,11 @@ function FeePayments() {
   }
 
   function resetDateFilter() {
-    setFromDate('')
-    setToDate('')
-    setAppliedFromDate('')
-    setAppliedToDate('')
+    const defaultRange = getDefaultDateRange()
+    setFromDate(defaultRange.from)
+    setToDate(defaultRange.to)
+    setAppliedFromDate(defaultRange.from)
+    setAppliedToDate(defaultRange.to)
     setError('')
   }
 
@@ -257,16 +282,29 @@ function FeePayments() {
     appliedToDate,
   ])
 
-  // Summary cards use the selected date range.
-  const totalCollected = filteredPayments
+  const dateFilteredPayments = useMemo(() => {
+    return payments.filter((payment) => {
+      const paymentDate = payment.paymentDate
+        ? new Date(payment.paymentDate).toISOString().slice(0, 10)
+        : ''
+
+      return (
+        (!appliedFromDate || (paymentDate && paymentDate >= appliedFromDate)) &&
+        (!appliedToDate || (paymentDate && paymentDate <= appliedToDate))
+      )
+    })
+  }, [payments, appliedFromDate, appliedToDate])
+
+  // Overview cards reflect the applied date range only.
+  const totalCollected = dateFilteredPayments
     .filter((payment) => payment.status === 'paid')
     .reduce((total, payment) => total + Number(payment.amount || 0), 0)
 
-  const pendingAmount = filteredPayments
+  const pendingAmount = dateFilteredPayments
     .filter((payment) => payment.status === 'pending')
     .reduce((total, payment) => total + Number(payment.amount || 0), 0)
 
-  const paidCount = filteredPayments.filter(
+  const paidCount = dateFilteredPayments.filter(
     (payment) => payment.status === 'paid',
   ).length
 
@@ -335,7 +373,7 @@ function FeePayments() {
         <section className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard
             title="Total Records"
-            value={filteredPayments.length}
+            value={dateFilteredPayments.length}
             icon="📋"
           />
 

@@ -712,7 +712,7 @@ function FeePayments() {
                   <tr>
                     <th className="px-5 py-4">Student</th>
                     <th className="px-5 py-4">Fee Type</th>
-                    <th className="px-5 py-4">Details</th>
+                    <th className="px-5 py-4">Month / Details</th>
                     <th className="px-5 py-4">Amount</th>
                     <th className="px-5 py-4">Payment Date</th>
                     <th className="px-5 py-4">Method</th>
@@ -747,7 +747,7 @@ function FeePayments() {
 
                       <td className="px-5 py-4 text-gray-400">
                         {payment.feeType === 'monthly'
-                          ? payment.month || '—'
+                          ? formatMonth(payment.month)
                           : payment.feeType === 'exam'
                             ? payment.exam || '—'
                             : 'One-time'}
@@ -849,6 +849,15 @@ function formatAmount(amount) {
   return new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
   }).format(Number(amount || 0))
+}
+
+function formatMonth(month) {
+  if (!month || !/^\d{4}-\d{2}$/.test(month)) return month || '—'
+
+  return new Date(`${month}-01T12:00:00`).toLocaleDateString('en-IN', {
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 function formatDate(date) {

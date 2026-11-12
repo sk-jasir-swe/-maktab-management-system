@@ -18,6 +18,7 @@ function AdminDashboard() {
   })
   const [passwordError, setPasswordError] = useState('')
   const [changingPassword, setChangingPassword] = useState(false)
+  const [showPasswordForm, setShowPasswordForm] = useState(false)
 
 
   // Fetch dashboard statistics
@@ -274,16 +275,27 @@ function AdminDashboard() {
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={loggingOut}
-              className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-400/20 disabled:opacity-50"
-            >
-              {loggingOut
-                ? 'Logging out...'
-                : 'Logout ↗'}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setPasswordError('')
+                  setShowPasswordForm(true)
+                }}
+                className="rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/20"
+              >
+                Change Password
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-400/20 disabled:opacity-50"
+              >
+                {loggingOut ? 'Logging out...' : 'Logout ↗'}
+              </button>
+            </div>
 
           </div>
         </header>
@@ -307,58 +319,6 @@ function AdminDashboard() {
               examinations and other Maktab activities from one place.
             </p>
           </section>
-
-          {/* Change admin password */}
-          <section className="mb-12 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/10 backdrop-blur-xl sm:p-8">
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold">Change Password</h3>
-              <p className="mt-2 text-sm text-white/50">
-                Verify your current password, then choose a new one.
-              </p>
-            </div>
-
-            {passwordError && (
-              <div role="alert" className="mb-5 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">
-                {passwordError}
-              </div>
-            )}
-
-            <form onSubmit={handleChangePassword} className="grid gap-5 sm:grid-cols-2">
-              {[
-                { name: 'currentPassword', label: 'Current password', autoComplete: 'current-password' },
-                { name: 'newPassword', label: 'New password', autoComplete: 'new-password' },
-                { name: 'confirmPassword', label: 'Confirm new password', autoComplete: 'new-password' },
-              ].map((field) => (
-                <label key={field.name} className="text-sm font-medium text-white/75">
-                  {field.label}
-                  <input
-                    name={field.name}
-                    type="password"
-                    required
-                    minLength={field.name === 'currentPassword' ? undefined : 8}
-                    autoComplete={field.autoComplete}
-                    value={passwordForm[field.name]}
-                    onChange={(event) => setPasswordForm((previous) => ({
-                      ...previous,
-                      [field.name]: event.target.value,
-                    }))}
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10"
-                  />
-                </label>
-              ))}
-
-              <div className="sm:col-span-2">
-                <button
-                  type="submit"
-                  disabled={changingPassword}
-                  className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {changingPassword ? 'Changing password...' : 'Update password'}
-                </button>
-              </div>
-            </form>
-          </section>
-
 
           {/* Loading */}
           {loading && (
@@ -457,6 +417,91 @@ function AdminDashboard() {
 
         </main>
       </div>
+
+      {showPasswordForm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget && !changingPassword) {
+              setShowPasswordForm(false)
+            }
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="change-password-title"
+            className="w-full max-w-lg rounded-2xl border border-white/10 bg-[#11162e] p-6 shadow-2xl sm:p-8"
+          >
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <h2 id="change-password-title" className="text-xl font-semibold">Change Password</h2>
+                <p className="mt-2 text-sm text-white/50">
+                  Verify your current password, then choose a new one.
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label="Close change password form"
+                onClick={() => setShowPasswordForm(false)}
+                disabled={changingPassword}
+                className="rounded-lg px-2 py-1 text-xl text-white/60 transition hover:bg-white/10 hover:text-white disabled:opacity-50"
+              >
+                ×
+              </button>
+            </div>
+
+            {passwordError && (
+              <div role="alert" className="mb-5 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-sm text-red-200">
+                {passwordError}
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword} className="space-y-5">
+              {[
+                { name: 'currentPassword', label: 'Current password', autoComplete: 'current-password' },
+                { name: 'newPassword', label: 'New password', autoComplete: 'new-password' },
+                { name: 'confirmPassword', label: 'Confirm new password', autoComplete: 'new-password' },
+              ].map((field) => (
+                <label key={field.name} className="block text-sm font-medium text-white/75">
+                  {field.label}
+                  <input
+                    name={field.name}
+                    type="password"
+                    required
+                    minLength={field.name === 'currentPassword' ? undefined : 8}
+                    autoComplete={field.autoComplete}
+                    value={passwordForm[field.name]}
+                    onChange={(event) => setPasswordForm((previous) => ({
+                      ...previous,
+                      [field.name]: event.target.value,
+                    }))}
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-300/50 focus:ring-2 focus:ring-cyan-300/10"
+                  />
+                </label>
+              ))}
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordForm(false)}
+                  disabled={changingPassword}
+                  className="rounded-xl border border-white/10 px-5 py-3 text-sm font-medium text-white/75 transition hover:bg-white/5 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  className="rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {changingPassword ? 'Changing...' : 'Update password'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

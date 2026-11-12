@@ -3,7 +3,7 @@ import '../App.css'
 
 function AdmissionSuccess() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-10 text-white">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-linear-to-br from-[#0b1026] via-[#1a1145] to-[#0b2a3d] bg-fixed px-4 py-10 text-white">
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-cyan-500/15 blur-[120px]" />
         <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-violet-400/10 blur-[120px]" />

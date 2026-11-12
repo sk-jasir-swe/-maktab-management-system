@@ -393,16 +393,13 @@ function Home() {
                 </div>
               </div>
 
-              <div className="my-8 flex h-56 items-center justify-center rounded-2xl border border-cyan-200/10 bg-gradient-to-br from-cyan-300/10 via-violet-200/5 to-transparent">
-                <div className="text-center">
-                  <div className="text-7xl text-cyan-300/80">
-                    <InstitutionLogo className="h-14 w-14 rounded-2xl" />
-                  </div>
-
-                  <p className="mt-4 text-sm tracking-[0.3em] text-cyan-100/70">
-                    LEARN • GROW • EXCEL
-                  </p>
-                </div>
+              <div className="my-8 overflow-hidden rounded-2xl border border-cyan-200/10 bg-[#071a59] shadow-lg shadow-black/20">
+                <img
+                  src="/images/institution-banner.png"
+                  alt="Siddiqua Deeniyat Munazzam Maktab, established 2026. Contact: 9002569862 and 8348565184."
+                  className="block h-auto w-full object-contain"
+                  fetchPriority="high"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

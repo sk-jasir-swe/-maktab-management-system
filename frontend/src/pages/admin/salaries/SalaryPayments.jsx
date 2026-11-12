@@ -776,7 +776,7 @@ function SalaryPayments() {
                       </td>
 
                       <td className="px-5 py-4 text-gray-300">
-                        {payment.month || '—'}
+                        {formatSalaryMonth(payment.month)}
                       </td>
 
                       <td className="px-5 py-4 font-bold text-[#55e6b8]">
@@ -874,6 +874,15 @@ function formatAmount(amount) {
   return new Intl.NumberFormat('en-IN', {
     maximumFractionDigits: 2,
   }).format(Number(amount || 0))
+}
+
+function formatSalaryMonth(month) {
+  if (!month || !/^\d{4}-\d{2}$/.test(month)) return month || '—'
+
+  return new Date(`${month}-01T12:00:00`).toLocaleDateString('en-IN', {
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 function formatDate(date) {

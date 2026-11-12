@@ -31,6 +31,7 @@ import ExamsResults from '../pages/admin/exams/ExamsResults'
 import Notices from '../pages/admin/notices/Notices'
 import Reports from '../pages/admin/reports/Reports'
 import Gallery from '../pages/Gallery'
+import StudentQrProfile from '../pages/StudentQrProfile'
 
 
 // Admin-only route protection
@@ -176,6 +177,11 @@ function App() {
       <Route
         path="/gallery"
         element={<Gallery />}
+      />
+
+      <Route
+        path="/student-card/:token"
+        element={<StudentQrProfile />}
       />
 
 

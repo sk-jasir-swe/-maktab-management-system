@@ -7,6 +7,11 @@ const validateObjectId = require("../middleware/validateObjectId.middleware");
 
 const router = express.Router();
 
+router.get(
+    "/public-profile/:token",
+    studentController.getPublicStudentProfile
+);
+
 router.post(
     "/",
     authenticateAdmin,

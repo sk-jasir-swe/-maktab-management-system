@@ -23,6 +23,13 @@ const studentSchema = new mongoose.Schema(
             trim: true
         },
 
+        publicProfileToken: {
+            type: String,
+            unique: true,
+            sparse: true,
+            select: true
+        },
+
         fatherName: {
             type: String,
             trim: true

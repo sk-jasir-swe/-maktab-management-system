@@ -1,4 +1,5 @@
 const Student = require("../models/student.model");
+const crypto = require("crypto");
 const {
     uploadPhoto,
     deletePhoto
@@ -59,6 +60,7 @@ async function createStudent(req, res) {
             codeNo,
             formNo,
             name,
+            publicProfileToken: crypto.randomBytes(32).toString("hex"),
             fatherName: guardianName || fatherName,
             guardianName: guardianName || fatherName,
             motherName,
@@ -103,9 +105,16 @@ async function createStudent(req, res) {
 // Get All Students
 async function getStudents(req, res) {
     try {
-        const students = await Student.find().sort({
+        let students = await Student.find().sort({
             createdAt: -1
         });
+
+        for (const student of students) {
+            if (!student.publicProfileToken) {
+                student.publicProfileToken = crypto.randomBytes(32).toString("hex");
+                await student.save();
+            }
+        }
 
         return res.status(200).json({
             students
@@ -132,6 +141,11 @@ async function getStudentById(req, res) {
             });
         }
 
+        if (!student.publicProfileToken) {
+            student.publicProfileToken = crypto.randomBytes(32).toString("hex");
+            await student.save();
+        }
+
         return res.status(200).json({
             student
         });
@@ -142,6 +156,33 @@ async function getStudentById(req, res) {
         return res.status(500).json({
             message: "Internal server error"
         });
+    }
+}
+
+// Public: Show the small set of student details encoded by their QR card.
+async function getPublicStudentProfile(req, res) {
+    try {
+        const student = await Student.findOne({
+            publicProfileToken: req.params.token
+        }).select("name rollNo preferredCourseClass preferredTime classTime guardianName fatherName photo");
+
+        if (!student) {
+            return res.status(404).json({ message: "Student QR profile not found." });
+        }
+
+        return res.status(200).json({
+            student: {
+                name: student.name,
+                rollNo: student.rollNo,
+                preferredCourseClass: student.preferredCourseClass,
+                preferredTime: student.preferredTime || student.classTime,
+                guardianName: student.guardianName || student.fatherName,
+                photo: student.photo?.url || ""
+            }
+        });
+    } catch (error) {
+        console.error("Get public student QR profile error:", error);
+        return res.status(500).json({ message: "Unable to load this student QR profile." });
     }
 }
 
@@ -326,6 +367,7 @@ async function deleteStudent(req, res) {
 
 
 module.exports = {
+    getPublicStudentProfile,
     createStudent,
     getStudents,
     getStudentById,

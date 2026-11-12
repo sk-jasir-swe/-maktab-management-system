@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import QRCode from 'qrcode'
 import { apiRequest } from '../../../services/api'
 import '../../../App.css'
 
@@ -330,6 +331,29 @@ function Students() {
     }
   }
 
+  async function handleDownloadQr(student) {
+    if (!student.publicProfileToken) {
+      setError('Student QR link is not ready. Refresh the student list and try again.')
+      return
+    }
+
+    try {
+      const profileUrl = `${window.location.origin}/student-card/${student.publicProfileToken}`
+      const qrImage = await QRCode.toDataURL(profileUrl, {
+        width: 640,
+        margin: 2,
+        errorCorrectionLevel: 'H',
+      })
+      const downloadLink = document.createElement('a')
+      const safeName = (student.name || 'student').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '')
+      downloadLink.href = qrImage
+      downloadLink.download = `${safeName}-student-qr.png`
+      downloadLink.click()
+    } catch (err) {
+      setError(err.message || 'Unable to generate the student QR code.')
+    }
+  }
+
   async function handlePhotoChange(event) {
     const selectedPhoto = event.target.files?.[0]
     setPhoto(null)
@@ -525,7 +549,7 @@ function Students() {
             </h1>
 
             <p className="mt-3 text-sm leading-6 text-white/50">
-              Add, search, update and manage student records.
+              Add, search, update and manage student records. Download each student’s public-details QR from the Actions column.
             </p>
           </div>
 
@@ -951,6 +975,14 @@ function Students() {
 
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadQr(student)}
+                            className="rounded-lg border border-violet-300/20 px-3 py-2 text-xs font-medium text-violet-200 transition hover:bg-violet-300/10"
+                          >
+                            Download QR
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => openEditForm(student)}

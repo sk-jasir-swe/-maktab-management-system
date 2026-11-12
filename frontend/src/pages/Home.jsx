@@ -37,6 +37,7 @@ function Home() {
   const [teachersLoading, setTeachersLoading] = useState(true)
 
   const [selectedImage, setSelectedImage] = useState(null)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -103,6 +104,7 @@ function Home() {
     function handleKeyDown(event) {
       if (event.key === 'Escape') {
         setSelectedImage(null)
+        setMobileMenuOpen(false)
       }
     }
 
@@ -186,8 +188,8 @@ function Home() {
               ☪
             </div>
 
-            <div>
-              <h1 className="text-lg font-bold tracking-wide">
+            <div className="min-w-0">
+              <h1 className="truncate text-sm font-bold tracking-wide sm:text-lg">
                 Siddiqua Deeniyat Munazzam Maktab
               </h1>
 
@@ -197,7 +199,7 @@ function Home() {
             </div>
           </a>
 
-          <div className="hidden items-center gap-8 text-sm text-white/70 md:flex">
+          <div className="hidden items-center gap-8 text-sm text-white/70 lg:flex">
             <a href="#home" className="transition hover:text-cyan-300">
               Home
             </a>
@@ -238,8 +240,57 @@ function Home() {
               Check Status
             </Link>
           </div>
+
+          <button
+            type="button"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/10 text-2xl text-cyan-200 lg:hidden"
+            aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={mobileMenuOpen}
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            {mobileMenuOpen ? '×' : '☰'}
+          </button>
         </nav>
       </header>
+
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden" role="presentation">
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            className="absolute inset-0 h-full w-full bg-black/60 backdrop-blur-sm"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <aside
+            className="absolute inset-y-0 right-0 flex w-[min(20rem,85vw)] flex-col border-l border-white/10 bg-[#10142e] p-6 shadow-2xl"
+            aria-label="Mobile navigation"
+          >
+            <div className="mb-7 flex items-center justify-between gap-3 border-b border-white/10 pb-5">
+              <p className="font-semibold text-cyan-200">Navigation</p>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="rounded-lg px-3 py-1 text-2xl text-white/70 hover:bg-white/10"
+                aria-label="Close navigation menu"
+              >
+                ×
+              </button>
+            </div>
+            <nav className="flex flex-col gap-1 text-white/80">
+              <a onClick={() => setMobileMenuOpen(false)} href="#home" className="rounded-xl px-4 py-3 hover:bg-white/10">Home</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#about" className="rounded-xl px-4 py-3 hover:bg-white/10">About</a>
+              <Link onClick={() => setMobileMenuOpen(false)} to="/rules" className="rounded-xl px-4 py-3 hover:bg-white/10">Rules &amp; Regulations</Link>
+              <a onClick={() => setMobileMenuOpen(false)} href="#education" className="rounded-xl px-4 py-3 hover:bg-white/10">Education</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#teachers" className="rounded-xl px-4 py-3 hover:bg-white/10">Teachers</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#gallery" className="rounded-xl px-4 py-3 hover:bg-white/10">Memories</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#notices" className="rounded-xl px-4 py-3 hover:bg-white/10">Notices</a>
+              <a onClick={() => setMobileMenuOpen(false)} href="#contact" className="rounded-xl px-4 py-3 hover:bg-white/10">Contact</a>
+              <Link onClick={() => setMobileMenuOpen(false)} to="/admission-status" className="mt-3 rounded-xl bg-cyan-400 px-4 py-3 text-center font-semibold text-[#0b1026]">Check Status</Link>
+              <Link onClick={() => setMobileMenuOpen(false)} to="/admission" className="mt-2 rounded-xl border border-white/15 px-4 py-3 text-center font-semibold text-white">Apply for Admission</Link>
+            </nav>
+          </aside>
+        </div>
+      )}
 
       <main id="home" className="relative z-10">
 

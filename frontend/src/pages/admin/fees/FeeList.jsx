@@ -95,6 +95,7 @@ function FeePayments() {
     setForm((previous) => ({
       ...previous,
       [name]: value,
+      ...(name === 'feeType' && value === 'monthly' ? { student: '' } : {}),
     }))
   }
 
@@ -343,7 +344,7 @@ function FeePayments() {
             </h1>
 
             <p className="mt-2 text-sm text-gray-400">
-              Manage student admission, monthly and exam fees.
+              Monthly pending fees are added automatically for active students. Edit a pending record to enter the amount and mark it paid.
             </p>
           </div>
 
@@ -441,7 +442,9 @@ function FeePayments() {
                     >
                       <option value="">Choose student</option>
 
-                      {students.map((student) => (
+                      {students
+                        .filter((student) => form.feeType !== 'monthly' || student.status === 'active')
+                        .map((student) => (
                         <option key={student._id} value={student._id}>
                           {student.name} — Roll No. {student.rollNo || 'Not assigned'}
                         </option>

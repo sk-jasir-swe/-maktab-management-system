@@ -1,5 +1,57 @@
 const FeePayment = require("../models/feePayment.model");
 const Student = require("../models/student.model");
+let currentMonthFeeGeneration = null;
+
+function getCurrentBillingMonth() {
+    const parts = new Intl.DateTimeFormat("en", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit"
+    }).formatToParts(new Date());
+    const year = parts.find((part) => part.type === "year").value;
+    const month = parts.find((part) => part.type === "month").value;
+    return `${year}-${month}`;
+}
+
+async function ensureCurrentMonthPendingFees() {
+    if (currentMonthFeeGeneration) return currentMonthFeeGeneration;
+
+    currentMonthFeeGeneration = (async () => {
+        const month = getCurrentBillingMonth();
+        const activeStudents = await Student.find({ status: "active" }).select("_id");
+        if (!activeStudents.length) return;
+
+        const existingMonthlyFees = await FeePayment.find({
+            student: { $in: activeStudents.map((student) => student._id) },
+            feeType: "monthly",
+            month
+        }).select("student");
+        const studentsWithFees = new Set(
+            existingMonthlyFees.map((fee) => fee.student.toString())
+        );
+
+        for (const student of activeStudents) {
+            if (studentsWithFees.has(student._id.toString())) continue;
+
+            await FeePayment.create({
+                student: student._id,
+                feeType: "monthly",
+                amount: 0,
+                month,
+                paymentDate: new Date(),
+                paymentMethod: "cash",
+                status: "pending",
+                note: "Auto-generated monthly fee. Enter the fee amount when updating this record."
+            });
+        }
+    })();
+
+    try {
+        await currentMonthFeeGeneration;
+    } finally {
+        currentMonthFeeGeneration = null;
+    }
+}
 
 
 // Create Fee Payment
@@ -25,17 +77,37 @@ async function createFeePayment(req, res) {
             });
         }
 
+        if (feeType === "monthly") {
+            if (studentExists.status !== "active") {
+                return res.status(400).json({
+                    message: "Monthly fee records can only be created for active students."
+                });
+            }
+
+            const existingMonthlyFee = await FeePayment.findOne({
+                student,
+                feeType: "monthly",
+                month
+            });
+
+            if (existingMonthlyFee) {
+                return res.status(409).json({
+                    message: "A monthly fee record already exists for this student and month. Please update that record instead."
+                });
+            }
+        }
+
         const feePayment = await FeePayment.create({
-    student,
-    feeType,
-    amount,
-    month,
-    exam,
-    paymentDate,
-    paymentMethod,
-    status,
-    note
-});
+            student,
+            feeType,
+            amount,
+            month,
+            exam,
+            paymentDate,
+            paymentMethod,
+            status,
+            note
+        });
 
 await feePayment.populate(
     "student",
@@ -60,6 +132,8 @@ await feePayment.populate(
 // Get All Fee Payments
 async function getFeePayments(req, res) {
     try {
+        await ensureCurrentMonthPendingFees();
+
         const feePayments = await FeePayment.find()
             .populate("student", "name fatherName phone rollNo")
             .sort({ createdAt: -1 });
@@ -81,6 +155,8 @@ async function getFeePayments(req, res) {
 // Get Fee Payments of One Student
 async function getStudentFeePayments(req, res) {
     try {
+        await ensureCurrentMonthPendingFees();
+
         const feePayments = await FeePayment.find({
             student: req.params.studentId
         })

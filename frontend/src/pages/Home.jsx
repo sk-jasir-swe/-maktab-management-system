@@ -401,9 +401,11 @@ function Home() {
                   </h3>
                 </div>
 
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-violet-400/10 text-2xl text-cyan-300">
-                  ✦
-                </div>
+                <img
+                  src="/images/siddiqua-deeniyat-favicon.png"
+                  alt="Siddiqua Deeniyat Maktab logo"
+                  className="h-12 w-12 shrink-0 object-contain"
+                />
               </div>
 
               <div className="my-8 overflow-hidden rounded-2xl border border-cyan-200/10 bg-[#071a59] shadow-lg shadow-black/20">

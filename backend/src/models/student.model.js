@@ -14,8 +14,7 @@ const studentSchema = new mongoose.Schema(
 
         formNo: {
             type: String,
-            trim: true,
-            default: "131"
+            trim: true
         },
 
         name: {

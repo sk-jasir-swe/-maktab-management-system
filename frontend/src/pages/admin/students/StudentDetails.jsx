@@ -76,7 +76,7 @@ function StudentDetails() {
         ['Roll No.', selectedStudent.rollNo],
         ['Date', formatDate(selectedStudent.admissionDate)],
         ['Code No.', selectedStudent.codeNo],
-        ['Form No.', selectedStudent.formNo || '131'],
+        ['Form No.', selectedStudent.formNo],
         ['Student Name', selectedStudent.name],
         ['Aadhar No.', selectedStudent.aadhaarNo],
         ['Date of Birth', formatDate(selectedStudent.dateOfBirth)],
@@ -117,7 +117,7 @@ function StudentDetails() {
           </h1>
 
           <p className="mt-3 text-sm text-white/50">
-            Search students by name and view their complete records.
+            Search students by name or roll number and view their complete records.
           </p>
         </header>
 

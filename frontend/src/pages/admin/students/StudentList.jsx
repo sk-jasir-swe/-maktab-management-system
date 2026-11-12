@@ -6,7 +6,7 @@ import '../../../App.css'
 const initialForm = {
   rollNo: '',
   codeNo: '',
-  formNo: '131',
+  formNo: '',
   name: '',
   aadhaarNo: '',
   age: '',
@@ -16,7 +16,7 @@ const initialForm = {
   schoolClass: '',
   schoolHour: '',
   tuitionHour: '',
-  preferredTime: 'Morning',
+  preferredTime: '',
   guardianName: '',
   guardianAadhaarNo: '',
   guardianProfession: '',
@@ -24,19 +24,90 @@ const initialForm = {
   fatherName: '',
   motherName: '',
   dateOfBirth: '',
-  gender: 'male',
   phone: '',
   whatsappNumber: '',
   address: '',
-  admissionDate: new Date().toISOString().split('T')[0],
-  classTime: 'morning',
-  status: 'active',
+  admissionDate: '',
+  classTime: '',
+  status: '',
+}
+
+function cropToPassportPhoto(file) {
+  return new Promise((resolve, reject) => {
+    const sourceUrl = URL.createObjectURL(file)
+    const image = new Image()
+
+    image.onload = () => {
+      URL.revokeObjectURL(sourceUrl)
+
+      const targetRatio = 7 / 9
+      const sourceRatio = image.width / image.height
+      let cropWidth = image.width
+      let cropHeight = image.height
+      let cropX = 0
+      let cropY = 0
+
+      if (sourceRatio > targetRatio) {
+        cropWidth = image.height * targetRatio
+        cropX = (image.width - cropWidth) / 2
+      } else {
+        cropHeight = image.width / targetRatio
+        cropY = (image.height - cropHeight) * 0.22
+      }
+
+      const canvas = document.createElement('canvas')
+      canvas.width = 413
+      canvas.height = 531
+
+      const context = canvas.getContext('2d')
+      if (!context) {
+        reject(new Error('Unable to prepare the passport photo.'))
+        return
+      }
+
+      context.imageSmoothingQuality = 'high'
+      context.drawImage(
+        image,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      )
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Unable to crop this image. Please choose another photo.'))
+          return
+        }
+
+        const croppedFile = new File(
+          [blob],
+          `${file.name.replace(/\.[^.]+$/, '')}-passport.jpg`,
+          { type: 'image/jpeg' },
+        )
+        resolve(croppedFile)
+      }, 'image/jpeg', 0.92)
+    }
+
+    image.onerror = () => {
+      URL.revokeObjectURL(sourceUrl)
+      reject(new Error('Unable to read this image. Please choose another photo.'))
+    }
+
+    image.src = sourceUrl
+  })
 }
 
 function Students() {
   const [students, setStudents] = useState([])
   const [formData, setFormData] = useState(initialForm)
   const [photo, setPhoto] = useState(null)
+  const [photoPreview, setPhotoPreview] = useState('')
+  const [photoProcessing, setPhotoProcessing] = useState(false)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [editingId, setEditingId] = useState(null)
@@ -49,6 +120,10 @@ function Students() {
   useEffect(() => {
     fetchStudents()
   }, [])
+
+  useEffect(() => () => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview)
+  }, [photoPreview])
 
   async function fetchStudents() {
     try {
@@ -77,12 +152,10 @@ function Students() {
   }
 
   function openAddForm() {
-    setFormData({
-      ...initialForm,
-      admissionDate: new Date().toISOString().split('T')[0],
-    })
+    setFormData({ ...initialForm })
 
     setPhoto(null)
+    setPhotoPreview('')
     setEditingId(null)
     setError('')
     setSuccess('')
@@ -93,7 +166,7 @@ function Students() {
     setFormData({
       rollNo: student.rollNo || '',
       codeNo: student.codeNo || '',
-      formNo: student.formNo || '131',
+      formNo: student.formNo || '',
       name: student.name || '',
       aadhaarNo: student.aadhaarNo || '',
       age: student.age ?? '',
@@ -125,6 +198,7 @@ function Students() {
     })
 
     setPhoto(null)
+    setPhotoPreview('')
     setEditingId(student._id)
     setError('')
     setSuccess('')
@@ -140,13 +214,14 @@ function Students() {
     setShowForm(false)
     setEditingId(null)
     setPhoto(null)
+    setPhotoPreview('')
     setError('')
   }
 
   async function handleSubmit(event) {
     event.preventDefault()
 
-    if (saving) return
+    if (saving || photoProcessing) return
 
     try {
       setSaving(true)
@@ -185,6 +260,7 @@ function Students() {
       setShowForm(false)
       setEditingId(null)
       setPhoto(null)
+      setPhotoPreview('')
 
       await fetchStudents()
     } catch (err) {
@@ -216,6 +292,27 @@ function Students() {
       setSuccess('Student deleted successfully.')
     } catch (err) {
       setError(err.message || 'Unable to delete student.')
+    }
+  }
+
+  async function handlePhotoChange(event) {
+    const selectedPhoto = event.target.files?.[0]
+    setPhoto(null)
+    setPhotoPreview('')
+
+    if (!selectedPhoto) return
+
+    try {
+      setPhotoProcessing(true)
+      const croppedPhoto = await cropToPassportPhoto(selectedPhoto)
+      setPhoto(croppedPhoto)
+      setPhotoPreview(URL.createObjectURL(croppedPhoto))
+      setError('')
+    } catch (err) {
+      setError(err.message || 'Unable to crop this photo.')
+      event.target.value = ''
+    } finally {
+      setPhotoProcessing(false)
     }
   }
 
@@ -397,7 +494,6 @@ function Students() {
                   { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
                   { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'guardianProfession', label: "Guardian's Professional", placeholder: 'Business, Job, Farmer, etc.' },
-                  { name: 'preferredCourseClass', label: 'Preferred Course/Class', placeholder: 'Course or class at Maktab' },
                 ].map((field) => (
                   <div key={field.name}>
                     <label htmlFor={field.name} className="text-sm text-white/75">
@@ -426,20 +522,57 @@ function Students() {
                   <label htmlFor="preferredTime" className="text-sm text-white/75">
                     Preferred Time *
                   </label>
-                  <input
+                  <select
                     id="preferredTime"
                     name="preferredTime"
                     value={formData.preferredTime}
                     onChange={handleChange}
                     className={inputClass}
-                    placeholder="e.g. After Asr / 4:00 PM"
                     required
-                  />
+                  >
+                    <option value="" disabled>Select preferred time</option>
+                    <option value="6:30 AM - 7:45 AM">6:30 AM - 7:45 AM</option>
+                    <option value="7:45 AM - 9:00 AM">7:45 AM - 9:00 AM</option>
+                    <option value="9:00 AM - 10:15 AM">9:00 AM - 10:15 AM</option>
+                    <option value="4:00 PM - 5:15 PM">4:00 PM - 5:15 PM</option>
+                    <option value="5:15 PM - 6:30 PM">5:15 PM - 6:30 PM</option>
+                    <option value="6:30 PM - 7:45 PM">6:30 PM - 7:45 PM</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="preferredCourseClass" className="text-sm text-white/75">
+                    Preferred Course/Class
+                  </label>
+                  <select
+                    id="preferredCourseClass"
+                    name="preferredCourseClass"
+                    value={formData.preferredCourseClass}
+                    onChange={handleChange}
+                    className={inputClass}
+                  >
+                    <option value="">Select course/class</option>
+                    <option value="Primary">Class Primary</option>
+                    <option value="00">00</option>
+                    <option value="01">01</option>
+                    <option value="02">02</option>
+                    <option value="03">03</option>
+                    <option value="04">04</option>
+                    <option value="05">05</option>
+                    <option value="Advance">Advance</option>
+                    <option value="06">06</option>
+                    <option value="07">07</option>
+                    <option value="08">08</option>
+                    <option value="09">09</option>
+                    <option value="10">10</option>
+                    <option value="Balegan">Balegan</option>
+                  </select>
                 </div>
 
                 <div>
                   <label htmlFor="status" className="text-sm text-white/75">Status *</label>
                   <select id="status" name="status" value={formData.status} onChange={handleChange} className={inputClass} required>
+                    <option value="" disabled>Select status</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                   </select>
@@ -464,17 +597,32 @@ function Students() {
                     id="photo"
                     type="file"
                     accept="image/jpeg,image/png,image/webp"
-                    onChange={(event) =>
-                      setPhoto(event.target.files?.[0] || null)
-                    }
+                    onChange={handlePhotoChange}
                     className="mt-2 block w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/60 file:mr-4 file:rounded-lg file:border-0 file:bg-cyan-400 file:px-4 file:py-2 file:font-semibold file:text-[#0b1026]"
                   />
 
                   <p className="mt-2 text-xs text-white/40">
-                    JPG, PNG or WEBP. Maximum size 5 MB.
+                    JPG, PNG or WEBP. The photo is auto-cropped to passport portrait size (35 × 45 mm).
                   </p>
 
-                  {photo && (
+                  {photoProcessing && (
+                    <p className="mt-2 text-sm text-cyan-300">Cropping passport photo...</p>
+                  )}
+
+                  {photoPreview && (
+                    <div className="mt-4 flex items-center gap-4">
+                      <img
+                        src={photoPreview}
+                        alt="Passport size student photo preview"
+                        className="h-auto w-24 rounded-lg border border-white/15 object-cover"
+                      />
+                      <p className="text-sm text-cyan-300">
+                        {photo ? `Ready to upload: ${photo.name}` : 'Passport photo preview'}
+                      </p>
+                    </div>
+                  )}
+
+                  {photo && !photoPreview && (
                     <p className="mt-2 text-sm text-cyan-300">
                       Selected: {photo.name}
                     </p>
@@ -485,10 +633,12 @@ function Students() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || photoProcessing}
                   className="rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-[#0b1026] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {saving
+                  {photoProcessing
+                    ? 'Cropping photo...'
+                    : saving
                     ? 'Saving...'
                     : editingId
                       ? 'Update Student'
@@ -514,7 +664,7 @@ function Students() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by student name, father name or phone..."
+            placeholder="Search by name, roll number, guardian or mobile..."
             className="min-w-0 flex-1 rounded-xl border border-white/10 bg-white/4 px-4 py-3 text-white outline-none placeholder:text-white/30 focus:border-cyan-300/40"
           />
 

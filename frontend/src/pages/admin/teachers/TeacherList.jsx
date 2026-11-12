@@ -49,10 +49,15 @@ function Teachers() {
 
   function handleChange(event) {
     const { name, value } = event.target
+    const cleanValue = name === 'phone' || name === 'whatsappNumber'
+      ? value.replace(/\D/g, '').slice(0, 10)
+      : name === 'name'
+        ? value.replace(/[^\p{L}\p{M}\s.'-]/gu, '')
+        : value
 
     setFormData((previous) => ({
       ...previous,
-      [name]: value,
+      [name]: cleanValue,
     }))
   }
 

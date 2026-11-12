@@ -3,6 +3,19 @@ import { Link } from 'react-router-dom'
 import { apiRequest } from '../services/api'
 import '../App.css'
 import InstitutionLogo from '../components/InstitutionLogo'
+import TimeRangeInput from '../components/TimeRangeInput'
+
+function calculateAge(dateOfBirth) {
+  if (!dateOfBirth) return ''
+  const [year, month, day] = dateOfBirth.split('-').map(Number)
+  const today = new Date()
+  let age = today.getFullYear() - year
+  if (
+    today.getMonth() + 1 < month ||
+    (today.getMonth() + 1 === month && today.getDate() < day)
+  ) age -= 1
+  return age >= 0 ? String(age) : ''
+}
 
 const initialFormData = {
   studentName: '',
@@ -36,12 +49,23 @@ function Admission() {
 
     let updatedValue = value
 
+    if (name === 'dateOfBirth') {
+      setFormData((previous) => ({
+        ...previous,
+        dateOfBirth: value,
+        age: calculateAge(value),
+      }))
+      setError('')
+      return
+    }
+
     if (name === 'phone' || name === 'whatsappNumber') {
       updatedValue = value.replace(/\D/g, '').slice(0, 10)
     } else if (name === 'aadhaarNo' || name === 'guardianAadhaarNo') {
       updatedValue = value.replace(/\D/g, '').slice(0, 12)
-    } else if (name === 'studentName') {
-      updatedValue = value.toUpperCase()
+    } else if (name === 'studentName' || name === 'guardianName') {
+      updatedValue = value.replace(/[^\p{L}\p{M}\s.'-]/gu, '')
+      if (name === 'studentName') updatedValue = updatedValue.toUpperCase()
     }
 
     setFormData((previous) => ({
@@ -255,22 +279,29 @@ function Admission() {
               <div className="grid gap-5 sm:grid-cols-2">
                 {[
                   { name: 'studentName', label: "Student's Name *", placeholder: 'Full name in capital letters', required: true, autoComplete: 'name', uppercase: true },
-                  { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit student Aadhaar', inputMode: 'numeric', maxLength: 12 },
+                  { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit student Aadhaar', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'dateOfBirth', label: 'Date of Birth *', type: 'date', required: true },
-                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
+                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120, readOnly: true, placeholder: 'Calculated from date of birth' },
                   { name: 'schoolName', label: 'Name of the School', placeholder: 'If currently attending school' },
                   { name: 'schoolClass', label: 'Class', placeholder: 'School class' },
-                  { name: 'schoolHour', label: 'School Hour', placeholder: 'School timing' },
-                  { name: 'tuitionHour', label: 'Tuition Hour', placeholder: 'Tuition timing' },
+                  { name: 'schoolHour', label: 'School Hour', type: 'time-range' },
+                  { name: 'tuitionHour', label: 'Tuition Hour', type: 'time-range' },
                   { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true, autoComplete: 'tel-national' },
                   { name: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '10-digit WhatsApp number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true },
                   { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
-                  { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit guardian Aadhaar', inputMode: 'numeric', maxLength: 12 },
+                  { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit guardian Aadhaar', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'guardianProfession', label: "Guardian's Profession", placeholder: 'Business, Job, Farmer, etc.' },
                 ].map((field) => (
                   <div key={field.name}>
-                    <label className={labelClass} htmlFor={field.name}>{field.label}</label>
-                    <input
+                    <label className={labelClass} htmlFor={field.type === 'time-range' ? `${field.name}-start` : field.name}>{field.label}</label>
+                    {field.type === 'time-range' ? (
+                      <TimeRangeInput
+                        id={field.name}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className={inputClass}
+                      />
+                    ) : <input
                       className={`${inputClass} ${field.uppercase ? 'uppercase' : ''}`}
                       id={field.name}
                       name={field.name}
@@ -280,13 +311,14 @@ function Admission() {
                       minLength={field.minLength}
                       maxLength={field.maxLength}
                       min={field.min}
-                      max={field.max}
+                      max={field.name === 'dateOfBirth' ? new Date().toISOString().slice(0, 10) : field.max}
                       value={formData[field.name]}
                       onChange={handleChange}
                       placeholder={field.placeholder}
                       autoComplete={field.autoComplete}
                       required={field.required}
-                    />
+                      readOnly={field.readOnly}
+                    />}
                   </div>
                 ))}
 

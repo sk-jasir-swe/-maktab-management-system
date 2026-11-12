@@ -2,7 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import QRCode from 'qrcode'
 import { apiRequest } from '../../../services/api'
+import TimeRangeInput from '../../../components/TimeRangeInput'
 import '../../../App.css'
+
+function calculateAge(dateOfBirth) {
+  if (!dateOfBirth) return ''
+  const [year, month, day] = dateOfBirth.split('-').map(Number)
+  const today = new Date()
+  let age = today.getFullYear() - year
+  if (
+    today.getMonth() + 1 < month ||
+    (today.getMonth() + 1 === month && today.getDate() < day)
+  ) age -= 1
+  return age >= 0 ? String(age) : ''
+}
 
 const initialForm = {
   rollNo: '',
@@ -178,9 +191,32 @@ function Students() {
 
   function handleChange(event) {
     const { name } = event.target
-    const value = name === 'name'
-      ? event.target.value.toUpperCase()
-      : event.target.value
+    let value = event.target.value
+
+    if (name === 'dateOfBirth') {
+      setFormData((previous) => ({
+        ...previous,
+        dateOfBirth: value,
+        age: calculateAge(value),
+      }))
+      return
+    }
+
+    const numericLimits = {
+      rollNo: 20,
+      codeNo: 20,
+      formNo: 20,
+      aadhaarNo: 12,
+      guardianAadhaarNo: 12,
+      phone: 10,
+      whatsappNumber: 10,
+    }
+    if (numericLimits[name]) {
+      value = value.replace(/\D/g, '').slice(0, numericLimits[name])
+    } else if (name === 'name' || name === 'guardianName') {
+      value = value.replace(/[^\p{L}\p{M}\s.'-]/gu, '')
+      if (name === 'name') value = value.toUpperCase()
+    }
 
     setFormData((previous) => ({
       ...previous,
@@ -642,18 +678,18 @@ function Students() {
             <form onSubmit={handleSubmit}>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {[
-                  { name: 'rollNo', label: 'Roll No.', placeholder: 'Student roll number' },
+                  { name: 'rollNo', label: 'Roll No.', placeholder: 'Student roll number', inputMode: 'numeric', pattern: '[0-9]*', maxLength: 20 },
                   { name: 'admissionDate', label: 'Date *', type: 'date', required: true },
-                  { name: 'codeNo', label: 'Code No.', placeholder: 'Institution code' },
-                  { name: 'formNo', label: 'Form No.', placeholder: '131', required: true },
+                  { name: 'codeNo', label: 'Code No.', placeholder: 'Institution code', inputMode: 'numeric', pattern: '[0-9]*', maxLength: 20 },
+                  { name: 'formNo', label: 'Form No.', placeholder: '131', required: true, inputMode: 'numeric', pattern: '[0-9]*', maxLength: 20 },
                   { name: 'name', label: "Student's Name *", placeholder: 'FULL NAME IN CAPITAL LETTERS', required: true, uppercase: true },
                   { name: 'aadhaarNo', label: 'Aadhar No.', placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
-                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120 },
+                  { name: 'age', label: 'Age', type: 'number', min: 0, max: 120, readOnly: true, placeholder: 'Calculated from date of birth' },
                   { name: 'schoolName', label: 'Name of the School', placeholder: 'School name (if applicable)' },
                   { name: 'schoolClass', label: 'Class', placeholder: 'School class' },
-                  { name: 'schoolHour', label: 'School Hour', placeholder: 'School timing' },
-                  { name: 'tuitionHour', label: 'Tuition Hour', placeholder: 'Tuition timing' },
+                  { name: 'schoolHour', label: 'School Hour', type: 'time-range' },
+                  { name: 'tuitionHour', label: 'Tuition Hour', type: 'time-range' },
                   { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', maxLength: 10, required: true },
                   { name: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '10-digit WhatsApp number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', maxLength: 10, required: true },
                   { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
@@ -661,10 +697,17 @@ function Students() {
                   { name: 'guardianProfession', label: "Guardian's Professional", placeholder: 'Business, Job, Farmer, etc.' },
                 ].map((field) => (
                   <div key={field.name}>
-                    <label htmlFor={field.name} className="text-sm text-white/75">
+                    <label htmlFor={field.type === 'time-range' ? `${field.name}-start` : field.name} className="text-sm text-white/75">
                       {field.label}
                     </label>
-                    <input
+                    {field.type === 'time-range' ? (
+                      <TimeRangeInput
+                        id={field.name}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className={inputClass}
+                      />
+                    ) : <input
                       id={field.name}
                       name={field.name}
                       type={field.type || 'text'}
@@ -678,8 +721,9 @@ function Students() {
                       minLength={field.minLength}
                       maxLength={field.maxLength}
                       min={field.min}
-                      max={field.max}
-                    />
+                      max={field.name === 'dateOfBirth' ? new Date().toISOString().slice(0, 10) : field.max}
+                      readOnly={field.readOnly}
+                    />}
                   </div>
                 ))}
 

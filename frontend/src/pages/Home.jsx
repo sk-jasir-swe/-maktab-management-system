@@ -119,11 +119,10 @@ function Home() {
   const contactNumbers = ['9002569862', '8348565184']
   const mapSearch = `${institutionName}, ${institutionAddress}`
 
-  const googleMapsUrl =
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapSearch)}`
+  const googleMapsUrl = 'https://maps.app.goo.gl/wzYfHRiBjwvhr79x8'
 
   const embeddedMapUrl =
-    `https://maps.google.com/maps?q=${encodeURIComponent(mapSearch)}&output=embed`
+    `https://maps.google.com/maps?q=${encodeURIComponent(googleMapsUrl)}&output=embed`
 
   const appleMapsUrl =
     `https://maps.apple.com/?q=${encodeURIComponent(mapSearch)}`

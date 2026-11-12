@@ -8,7 +8,7 @@ function AdmissionStatus() {
     phone: '',
   })
 
-  const [application, setApplication] = useState(null)
+  const [applications, setApplications] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -26,7 +26,7 @@ function AdmissionStatus() {
 
     setLoading(true)
     setError('')
-    setApplication(null)
+    setApplications([])
 
     try {
       const response = await apiRequest('/admissions/check-status', {
@@ -40,7 +40,7 @@ function AdmissionStatus() {
         }),
       })
 
-      setApplication(response)
+      setApplications(response.applications || [])
     } catch (error) {
       setError(
         error.message ||
@@ -91,8 +91,8 @@ function AdmissionStatus() {
           </h1>
 
           <p className="mt-3 leading-7 text-white/55">
-            Enter your application number and registered phone number to
-            check your latest admission status.
+            Enter your registered phone number to check your application status.
+            The application number is optional.
           </p>
 
           {error && (
@@ -110,7 +110,7 @@ function AdmissionStatus() {
                 htmlFor="applicationNumber"
                 className="text-sm font-medium text-white/75"
               >
-                Admission Number *
+                Admission Number (Optional)
               </label>
 
               <input
@@ -122,8 +122,10 @@ function AdmissionStatus() {
                 placeholder="MKT-2026-A1B2C3D4"
                 className={inputClass}
                 autoComplete="off"
-                required
               />
+              <p className="mt-2 text-xs text-white/40">
+                Leave this blank if you have forgotten it. We will show all applications linked to your phone number.
+              </p>
             </div>
 
             <div>
@@ -156,64 +158,63 @@ function AdmissionStatus() {
             </button>
           </form>
 
-          {application && (
-            <div
-              className="mt-8 rounded-2xl border border-white/10 bg-black/20 p-5"
-              aria-live="polite"
-            >
-              <p className="text-sm text-white/50">Admission Number</p>
+          {applications.length > 0 && (
+            <div className="mt-8 space-y-4" aria-live="polite">
+              {applications.map((application) => {
+                const status = application.status?.toLowerCase()
 
-              <p className="mt-1 break-all font-semibold text-cyan-300">
-                {application.applicationNumber}
-              </p>
+                return (
+                  <div
+                    key={application.applicationNumber}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-5"
+                  >
+                    <p className="text-sm text-white/50">Admission Number</p>
+                    <p className="mt-1 break-all font-semibold text-cyan-300">
+                      {application.applicationNumber}
+                    </p>
 
-              <div className="mt-5 border-t border-white/10 pt-5">
-                <p className="text-sm text-white/50">Student Name</p>
+                    <div className="mt-5 border-t border-white/10 pt-5">
+                      <p className="text-sm text-white/50">Student Name</p>
+                      <p className="mt-1 text-lg font-semibold">
+                        {application.studentName}
+                      </p>
+                    </div>
 
-                <p className="mt-1 text-lg font-semibold">
-                  {application.studentName}
-                </p>
-              </div>
+                    <div className="mt-5">
+                      <p className="text-sm text-white/50">Current Status</p>
+                      <span
+                        className={`mt-2 inline-flex rounded-full border px-4 py-2 text-sm font-bold capitalize ${
+                          statusClasses[status] ||
+                          'border-white/20 bg-white/10 text-white'
+                        }`}
+                      >
+                        {status || 'Unknown'}
+                      </span>
+                    </div>
 
-              <div className="mt-5">
-                <p className="text-sm text-white/50">Current Status</p>
-
-                <span
-                  className={`mt-2 inline-flex rounded-full border px-4 py-2 text-sm font-bold capitalize ${
-                    statusClasses[status] ||
-                    'border-white/20 bg-white/10 text-white'
-                  }`}
-                >
-                  {status || 'Unknown'}
-                </span>
-              </div>
-
-              {status === 'pending' && (
-                <p className="mt-5 text-sm leading-6 text-amber-200/80">
-                  Your application is under review. Please check again later.
-                </p>
-              )}
-
-              {status === 'accepted' && (
-                <p className="mt-5 text-sm leading-6 text-emerald-200/80">
-                  Congratulations! Your admission application has been
-                  accepted.
-                </p>
-              )}
-
-              {status === 'rejected' && (
-                <p className="mt-5 text-sm leading-6 text-red-200/80">
-                  Your application has been rejected. Please contact the
-                  Maktab administration for further information.
-                </p>
-              )}
-
-              {application.updatedAt && (
-                <p className="mt-5 text-xs text-white/40">
-                  Last updated:{' '}
-                  {new Date(application.updatedAt).toLocaleString('en-IN')}
-                </p>
-              )}
+                    {status === 'pending' && (
+                      <p className="mt-5 text-sm leading-6 text-amber-200/80">
+                        Your application is under review. Please check again later.
+                      </p>
+                    )}
+                    {status === 'accepted' && (
+                      <p className="mt-5 text-sm leading-6 text-emerald-200/80">
+                        Congratulations! Your admission application has been accepted.
+                      </p>
+                    )}
+                    {status === 'rejected' && (
+                      <p className="mt-5 text-sm leading-6 text-red-200/80">
+                        Your application has been rejected. Please contact the Maktab administration for further information.
+                      </p>
+                    )}
+                    {application.updatedAt && (
+                      <p className="mt-5 text-xs text-white/40">
+                        Last updated: {new Date(application.updatedAt).toLocaleString('en-IN')}
+                      </p>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           )}
         </div>

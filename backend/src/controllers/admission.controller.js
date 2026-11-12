@@ -166,19 +166,11 @@ async function checkAdmissionStatus(req, res) {
     try {
         const { applicationNumber, phone } = req.body;
 
-        if (
-            typeof applicationNumber !== "string" ||
-            typeof phone !== "string" ||
-            !applicationNumber.trim() ||
-            !phone.trim()
-        ) {
+        if (typeof phone !== "string" || !phone.trim()) {
             return res.status(400).json({
-                message: "Application number and registered phone number are required"
+                message: "Registered phone number is required"
             });
         }
-
-        const normalizedApplicationNumber =
-            applicationNumber.trim().toUpperCase();
 
         const normalizedPhone = phone.trim();
 
@@ -188,26 +180,30 @@ async function checkAdmissionStatus(req, res) {
             });
         }
 
-        const admission = await Admission.findOne({
-            applicationNumber: normalizedApplicationNumber,
-            phone: normalizedPhone
-        }).select(
-            "applicationNumber studentName status createdAt updatedAt"
-        );
+        const query = { phone: normalizedPhone };
+        if (typeof applicationNumber === "string" && applicationNumber.trim()) {
+            query.applicationNumber = applicationNumber.trim().toUpperCase();
+        }
 
-        if (!admission) {
+        const admissions = await Admission.find(query)
+            .select("applicationNumber studentName status createdAt updatedAt")
+            .sort({ createdAt: -1 });
+
+        if (!admissions.length) {
             return res.status(404).json({
-                message: "Application not found. Please check your application number and registered phone number."
+                message: "No application found for this phone number. Please check the registered number and try again."
             });
         }
 
         return res.status(200).json({
             message: "Application status fetched successfully",
-            applicationNumber: admission.applicationNumber,
-            studentName: admission.studentName,
-            status: admission.status,
-            submittedAt: admission.createdAt,
-            updatedAt: admission.updatedAt
+            applications: admissions.map((admission) => ({
+                applicationNumber: admission.applicationNumber,
+                studentName: admission.studentName,
+                status: admission.status,
+                submittedAt: admission.createdAt,
+                updatedAt: admission.updatedAt
+            }))
         });
     } catch (error) {
         console.error("Check admission status error:", error);

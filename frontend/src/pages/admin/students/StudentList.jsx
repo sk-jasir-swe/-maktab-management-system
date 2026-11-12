@@ -270,7 +270,7 @@ function Students() {
         body.append(key, value)
       })
       body.set('classTime', formData.preferredTime)
-      body.set('whatsappNumber', formData.whatsappNumber || formData.phone)
+      body.set('whatsappNumber', formData.whatsappNumber)
       body.set('fatherName', formData.guardianName)
       body.set('age', formData.age)
 
@@ -630,6 +630,7 @@ function Students() {
                   { name: 'schoolHour', label: 'School Hour', placeholder: 'School timing' },
                   { name: 'tuitionHour', label: 'Tuition Hour', placeholder: 'Tuition timing' },
                   { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', maxLength: 10, required: true },
+                  { name: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '10-digit WhatsApp number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', maxLength: 10, required: true },
                   { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
                   { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit Aadhaar number', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'guardianProfession', label: "Guardian's Professional", placeholder: 'Business, Job, Farmer, etc.' },

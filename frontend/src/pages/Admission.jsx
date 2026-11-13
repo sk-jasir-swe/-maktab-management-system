@@ -65,7 +65,7 @@ function Admission() {
       updatedValue = value.replace(/\D/g, '').slice(0, 12)
     } else if (name === 'studentName' || name === 'guardianName') {
       updatedValue = value.replace(/[^\p{L}\p{M}\s.'-]/gu, '')
-      if (name === 'studentName') updatedValue = updatedValue.toUpperCase()
+      updatedValue = updatedValue.toUpperCase()
     }
 
     setFormData((previous) => ({
@@ -288,7 +288,7 @@ function Admission() {
                   { name: 'tuitionHour', label: 'Tuition Hour', type: 'time-range' },
                   { name: 'phone', label: 'Mobile No. *', placeholder: '10-digit contact number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true, autoComplete: 'tel-national' },
                   { name: 'whatsappNumber', label: 'WhatsApp Number *', placeholder: '10-digit WhatsApp number', type: 'tel', inputMode: 'numeric', pattern: '[0-9]{10}', minLength: 10, maxLength: 10, required: true },
-                  { name: 'guardianName', label: "Guardian's Name *", placeholder: 'Father / Mother / Guardian', required: true },
+                  { name: 'guardianName', label: "Guardian's Name *", placeholder: 'FATHER / MOTHER / GUARDIAN', required: true, uppercase: true },
                   { name: 'guardianAadhaarNo', label: "Guardian's Aadhar No.", placeholder: '12-digit guardian Aadhaar', inputMode: 'numeric', pattern: '[0-9]{12}', minLength: 12, maxLength: 12 },
                   { name: 'guardianProfession', label: "Guardian's Profession", placeholder: 'Business, Job, Farmer, etc.' },
                 ].map((field) => (
@@ -319,6 +319,7 @@ function Admission() {
                       required={field.required}
                       readOnly={field.readOnly}
                     />}
+                    {field.name === 'whatsappNumber' && <button type="button" onClick={() => setFormData((previous) => ({ ...previous, whatsappNumber: previous.phone }))} className="mt-2 text-xs font-semibold text-cyan-300 hover:text-cyan-200">Same as mobile number</button>}
                   </div>
                 ))}
 
@@ -374,6 +375,7 @@ function Admission() {
                 <div className="sm:col-span-2">
                   <label className={labelClass} htmlFor="residentialAddress">Residential Full Address</label>
                   <textarea className={`${inputClass} min-h-24 resize-y`} id="residentialAddress" name="residentialAddress" value={formData.residentialAddress} onChange={handleChange} placeholder="Current residential address" rows={3} />
+                  <button type="button" onClick={() => setFormData((previous) => ({ ...previous, residentialAddress: previous.permanentAddress }))} className="mt-2 text-xs font-semibold text-cyan-300 hover:text-cyan-200">Same as permanent address</button>
                 </div>
               </div>
 

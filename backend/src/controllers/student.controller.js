@@ -164,7 +164,7 @@ async function getPublicStudentProfile(req, res) {
     try {
         const student = await Student.findOne({
             publicProfileToken: req.params.token
-        }).select("name rollNo preferredCourseClass preferredTime classTime guardianName fatherName photo");
+        }).select("name rollNo preferredCourseClass preferredTime classTime guardianName fatherName residentialAddress photo");
 
         if (!student) {
             return res.status(404).json({ message: "Student QR profile not found." });
@@ -177,6 +177,7 @@ async function getPublicStudentProfile(req, res) {
                 preferredCourseClass: student.preferredCourseClass,
                 preferredTime: student.preferredTime || student.classTime,
                 guardianName: student.guardianName || student.fatherName,
+                residentialAddress: student.residentialAddress,
                 photo: student.photo?.url || ""
             }
         });

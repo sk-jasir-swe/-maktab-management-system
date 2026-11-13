@@ -35,6 +35,7 @@ function StudentQrProfile() {
         ['Class', student.preferredCourseClass],
         ['Timing', student.preferredTime],
         ["Guardian's Name", student.guardianName],
+        ['Present Address', student.residentialAddress],
       ]
     : []
 

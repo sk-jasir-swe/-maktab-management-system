@@ -310,7 +310,11 @@ function Home() {
       <main id="home" className="relative z-10">
 
         {/* Hero Section */}
-        <section className="mx-auto grid min-h-[78vh] max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2">
+        <section className="relative isolate mx-auto my-8 max-w-7xl overflow-hidden rounded-[2rem] border border-emerald-100/10 bg-gradient-to-br from-emerald-950/35 via-[#11152d]/70 to-amber-950/25 px-6 py-10 shadow-2xl shadow-black/20 backdrop-blur-xl md:my-12 md:px-10 md:py-14">
+          <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 opacity-[0.16]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent 0 34px, rgba(167,243,208,0.22) 35px 36px, transparent 37px 68px), repeating-linear-gradient(-45deg, transparent 0 34px, rgba(253,230,138,0.16) 35px 36px, transparent 37px 68px)' }} />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-28 -z-10 h-80 w-80 rounded-full bg-emerald-400/10 blur-3xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -bottom-32 -left-24 -z-10 h-80 w-80 rounded-full bg-amber-300/10 blur-3xl" />
+          <div className="grid min-h-[68vh] items-center gap-14 md:grid-cols-2">
           <div>
             <div lang="ar" dir="rtl" className="mb-7 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 text-lg text-cyan-200">
               السلام عليكم
@@ -454,6 +458,7 @@ function Home() {
                 </p>
               </div>
             </div>
+          </div>
           </div>
         </section>
 

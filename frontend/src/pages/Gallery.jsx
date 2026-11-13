@@ -5,7 +5,7 @@ import '../App.css'
 const GALLERY_IMAGES = [
   {
     title: 'Our Maktab',
-    description: 'A place to learn and grow.',
+    description: 'Our learning space.',
     image: '/images/maktab-1.jpg',
   },
   {

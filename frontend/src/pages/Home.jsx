@@ -7,7 +7,7 @@ import InstitutionLogo from '../components/InstitutionLogo'
 const GALLERY_IMAGES = [
   {
     title: 'Our Maktab',
-    description: 'A place to learn and grow.',
+    description: 'Our learning space.',
     image: '/images/maktab-1.jpg',
   },
   {
@@ -310,10 +310,8 @@ function Home() {
         {/* Hero Section */}
         <section className="mx-auto grid min-h-[78vh] max-w-7xl items-center gap-14 px-6 py-20 md:grid-cols-2">
           <div>
-            <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 text-sm text-cyan-200">
-              <span className="h-2 w-2 rounded-full bg-violet-400" />
-
-              A place to learn and grow
+            <div lang="ar" dir="rtl" className="mb-7 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.06] px-4 py-2 text-lg text-cyan-200">
+              السلام عليكم
             </div>
 
             <h2 className="max-w-2xl text-5xl font-bold leading-tight tracking-tight md:text-7xl">
